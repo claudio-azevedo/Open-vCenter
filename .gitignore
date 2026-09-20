@@ -1,0 +1,16 @@
+# Local-only notes
+PRE-PUBLISH.md
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Jekyll (docs/) build + local deps
+docs/_site/
+docs/.jekyll-cache/
+docs/.jekyll-metadata
+docs/vendor/
+docs/.bundle/
+node_modules/

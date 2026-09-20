@@ -1,0 +1,34 @@
+title: Open vCenter
+description: >-
+  Web console for managing Microsoft Hyper-V clusters, hosts and virtual
+  machines - a distributed system of a web frontend, a REST API + worker,
+  and a per-host agent that communicate over RabbitMQ.
+
+# Set for project pages at https://claudio-azevedo.github.io/Open-Virtualization-Manager
+url: https://claudio-azevedo.github.io
+baseurl: /Open-Virtualization-Manager
+
+theme: just-the-docs
+
+color_scheme: dark
+search_enabled: true
+
+# Header links (top-right)
+aux_links:
+  "GitHub":
+    - "https://github.com/claudio-azevedo/Open-Virtualization-Manager"
+aux_links_new_tab: true
+
+# Footer
+back_to_top: true
+back_to_top_text: "Back to top"
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
+  - README.md
