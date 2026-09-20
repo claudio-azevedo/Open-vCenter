@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ovc-postgres
+  namespace: ovc-infra
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector: { matchLabels: { app: ovc-postgres } }
+  template:
+    metadata: { labels: { app: ovc-postgres } }
+    spec:
+      securityContext: { fsGroup: 999 } # local-path PVCs mount root-owned
+      containers:
+        - name: ovc-postgres
+          image: postgres:17
+          envFrom: [{ configMapRef: { name: ovc-postgres-configmap } }]
+          env:
+            # Keep the real data one level down so initdb never sees a
+            # non-empty mount point (lost+found etc.).
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          ports: [{ containerPort: 5432 }]
+          volumeMounts:
+            - { name: data, mountPath: /var/lib/postgresql/data }
+            - { name: initdb, mountPath: /docker-entrypoint-initdb.d }
+          readinessProbe:
+            exec: { command: ["sh", "-c", "pg_isready -U $POSTGRES_USER"] }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            exec: { command: ["sh", "-c", "pg_isready -U $POSTGRES_USER"] }
+            initialDelaySeconds: 30
+            periodSeconds: 15
+      volumes:
+        - name: data
+          persistentVolumeClaim: { claimName: ovc-postgres-data }
+        - name: initdb
+          configMap: { name: ovc-postgres-initdb-configmap }

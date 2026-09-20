@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovc-backend-configmap
+  namespace: ovc-infra
+data:
+  OVC_ENV: dev
+  OVC_CORS_ORIGINS: '["http://frontend.openvcenter.local"]'
+
+  # Postgres / Valkey / RabbitMQ - cluster-internal Service DNS names.
+  OVC_DATABASE_URL: postgresql+asyncpg://ovc:PleaseChangeMe1@ovc-postgres-service:5432/ovc
+  OVC_VALKEY_URL: redis://ovc-valkey-service:6379/0
+  OVC_RABBITMQ_URL: amqp://ovc:PleaseChangeMe1@ovc-rabbitmq-service-nodeport:5672/
+  OVC_RABBITMQ_MGMT_URL: http://ovc-rabbitmq-service-nodeport:15672
+  # Base (scheme/host/port/vhost) for the amqp:// URL baked into each host's
+  # generated config.ini / install one-liner - credentials are per-host,
+  # added by the backend. OVC_RABBITMQ_URL above is cluster-internal only,
+  # but the agent runs on a Hyper-V host outside the cluster, so this needs
+  # the NodePort and a hostname/IP the hosts can actually reach.
+  OVC_AGENT_RABBITMQ_URL: amqp://rabbitmq.openvcenter.local:30672/
+
+  # Auth: real OIDC against the already-deployed Keycloak. ISSUER must equal
+  # the token's `iss` (the URL the browser used - Keycloak's Ingress host),
+  # while JWKS_URL is how *this pod* reaches Keycloak internally.
+  OVC_AUTH_MODE: oidc
+  OVC_OIDC_ISSUER: http://keycloak.openvcenter.local/realms/ovc
+  OVC_OIDC_JWKS_URL: http://ovc-keycloak-service-nodeport:8080/realms/ovc/protocol/openid-connect/certs
+  OVC_OIDC_AUDIENCE: ovc-frontend
+  OVC_OIDC_CLIENT_ID: ovc-frontend
+
+  # Uploaded ovc-agent binaries (see pvc.yaml, mounted only on the api pod).
+  OVC_AGENT_STORAGE: local
+  OVC_AGENT_STORAGE_DIR: /app/uploads/agent-binaries
+  # External URL a Hyper-V host's agent uses to download binaries - origin
+  # only, the backend appends OVC_API_PREFIX ("/api") itself. Required for
+  # the Setup Agent one-liner / agent upgrades to work at all with
+  # OVC_AGENT_STORAGE=local (docs/kubernetes.md's example omits this).
+  OVC_PUBLIC_BASE_URL: http://frontend.openvcenter.local
+
+  OVC_PREFLIGHT: "true"
+  OVC_PREFLIGHT_RUN_MIGRATIONS: "true"
+  OVC_PREFLIGHT_MANAGE_RABBITMQ_USERS: "true"

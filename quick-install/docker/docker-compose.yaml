@@ -1,0 +1,161 @@
+services:
+  ovc-postgres:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ovc
+      POSTGRES_USER: ovc
+      POSTGRES_PASSWORD: PleaseChangeMe1
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ovc"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ovc-rabbitmq:
+    image: rabbitmq:4-management
+    hostname: ovc-rabbitmq # stable Erlang node name across recreates
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ovc
+      RABBITMQ_DEFAULT_PASS: PleaseChangeMe1
+    ports: ["5672:5672", "15672:15672"]
+    volumes: ["rabbitmq:/var/lib/rabbitmq"]
+
+  ovc-valkey:
+    image: valkey/valkey:8
+    restart: unless-stopped
+    command: ["--save", "60", "1"]
+    ports: ["6379:6379"]
+    volumes: ["valkey:/data"]
+
+  ovc-guacd: # only needed for the VM Console tab
+    image: guacamole/guacd:1.6.0
+    restart: unless-stopped
+    ports: ["4822:4822"]
+
+  # Postgres-backed, with the "ovc" realm auto-imported on first boot - no
+  # manual realm/client creation, and it survives a container restart.
+  ovc-keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    command: ["start-dev", "--import-realm"]
+    restart: unless-stopped
+    ports: ["8080:8080"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://ovc-postgres:5432/keycloak
+      KC_DB_USERNAME: ovc
+      KC_DB_PASSWORD: PleaseChangeMe1
+      KC_HEALTH_ENABLED: "true"
+    volumes:
+      - ./keycloak/ovc-realm.json:/opt/keycloak/data/import/ovc-realm.json:ro
+    depends_on:
+      ovc-postgres: { condition: service_healthy }
+
+  ovc-webrdp:
+    image: ghcr.io/claudio-azevedo/ovc-webrdp:latest
+    restart: unless-stopped
+    depends_on: [ovc-guacd]
+    ports: ["8090:8080"]
+    environment:
+      GUACD_HOSTNAME: ovc-guacd
+      GUACD_PORT: "4822"
+      WEBAPP_CONTEXT: webrdp
+      # dev: allow the frontend (any origin) to embed the console iframe
+      WEBRDP_FRAME_ANCESTORS: "*"
+
+  ovc-backend:
+    image: ghcr.io/claudio-azevedo/ovc-backend:latest
+    restart: unless-stopped
+    depends_on:
+      ovc-postgres: { condition: service_healthy }
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports: ["8000:8000"]
+    volumes: ["agent-binaries:/app/uploads"]
+    environment:
+      OVC_DATABASE_URL: postgresql+asyncpg://ovc:PleaseChangeMe1@ovc-postgres:5432/ovc
+      OVC_VALKEY_URL: redis://ovc-valkey:6379/0
+      OVC_RABBITMQ_URL: amqp://ovc:PleaseChangeMe1@ovc-rabbitmq:5672/
+      OVC_RABBITMQ_MGMT_URL: http://ovc-rabbitmq:15672
+      OVC_CORS_ORIGINS: '["http://localhost"]'
+      # Hyper-V hosts reach RabbitMQ from OUTSIDE Docker (they're separate
+      # Windows machines). "localhost" only works if a host agent runs on
+      # this same machine - point this at the Docker host's LAN IP otherwise.
+      OVC_AGENT_RABBITMQ_URL: amqp://localhost:5672/
+      OVC_AUTH_MODE: oidc
+      OVC_OIDC_ISSUER: http://localhost:8080/realms/ovc
+      OVC_OIDC_JWKS_URL: http://ovc-keycloak:8080/realms/ovc/protocol/openid-connect/certs
+      OVC_OIDC_AUDIENCE: ovc-frontend
+      OVC_OIDC_CLIENT_ID: ovc-frontend
+      OVC_AGENT_STORAGE: local
+      OVC_AGENT_STORAGE_DIR: /app/uploads/agent-binaries
+      # Through nginx's /api/ rule below - what a Hyper-V host's agent uses
+      # to download ovc-agent binaries. Required for the Setup Agent
+      # one-liner to work at all with OVC_AGENT_STORAGE=local.
+      OVC_PUBLIC_BASE_URL: http://localhost
+      OVC_PREFLIGHT: "true"
+      OVC_PREFLIGHT_RUN_MIGRATIONS: "true"
+      OVC_PREFLIGHT_MANAGE_RABBITMQ_USERS: "true"
+
+  ovc-backend-worker:
+    image: ghcr.io/claudio-azevedo/ovc-backend:latest
+    restart: unless-stopped
+    depends_on: [ovc-backend]
+    command: ["python", "-m", "app.worker"]
+    environment:
+      OVC_DATABASE_URL: postgresql+asyncpg://ovc:PleaseChangeMe1@ovc-postgres:5432/ovc
+      OVC_VALKEY_URL: redis://ovc-valkey:6379/0
+      OVC_RABBITMQ_URL: amqp://ovc:PleaseChangeMe1@ovc-rabbitmq:5672/
+      OVC_RABBITMQ_MGMT_URL: http://ovc-rabbitmq:15672
+
+  ovc-frontend:
+    image: ghcr.io/claudio-azevedo/ovc-frontend:latest
+    restart: unless-stopped
+    depends_on: [ovc-backend]
+    ports: ["3000:3000"] # direct/debug access only - see README
+    environment:
+      API_URL: http://ovc-backend:8000/api
+      # Base URL of ovc-webrdp - proxies /webrdp/tunnel (VM Console tab) to
+      # it, server-to-server, read at runtime on every request. Confirmed
+      # working end-to-end (VMConnect + host RDP) against a real
+      # ovc-webrdp/guacd. Requires an ovc-frontend image built after its
+      # WEBRDP_ORIGIN fix - older images ignore this and expect a Kubernetes
+      # Service named ovc-webrdp-service-nodeport instead, baked in at build
+      # time (not reachable from Compose at all). Not a concern here - no
+      # production deploy ever used one of those images.
+      WEBRDP_ORIGIN: http://ovc-webrdp:8080/webrdp
+      VITE_OIDC_PROVIDER_NAME: Keycloak
+      OIDC_ISSUER: http://localhost:8080/realms/ovc
+      OIDC_CLIENT_ID: ovc-frontend
+      OIDC_CLIENT_SECRET: ovc-frontend-dev-secret
+      # From .env, generated by up.sh - a session-signing key, not a shared
+      # default, so it isn't hardcoded here. Run ./up.sh, not `docker
+      # compose up` directly, or this is unset and the container fails fast.
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?run ./up.sh instead of docker compose directly}
+      BETTER_AUTH_URL: http://localhost/frontend-api/auth
+      # VITE_API_URL / VITE_WEBRDP_URL are left unset on purpose - both
+      # default to relative paths (/frontend-api/api, /webrdp), correct once
+      # nginx puts everything on one domain (see nginx/nginx.conf).
+
+  # The "ingress": single entrypoint on :80, so the browser, Keycloak's
+  # redirect_uri and OVC_PUBLIC_BASE_URL all agree on one origin
+  # (http://localhost) instead of juggling per-service ports.
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    depends_on: [ovc-frontend, ovc-backend]
+    ports: ["80:80"]
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+
+volumes:
+  pgdata:
+  rabbitmq:
+  valkey:
+  agent-binaries:

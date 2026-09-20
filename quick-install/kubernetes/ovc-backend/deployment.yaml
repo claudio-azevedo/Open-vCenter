@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ovc-backend
+  namespace: ovc-infra
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector: { matchLabels: { app: ovc-backend } }
+  template:
+    metadata: { labels: { app: ovc-backend } }
+    spec:
+      containers:
+        - name: ovc-backend
+          image: ghcr.io/claudio-azevedo/ovc-backend:latest
+          command:
+            ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+          envFrom: [{ configMapRef: { name: ovc-backend-configmap } }]
+          ports: [{ containerPort: 8000 }]
+          # uploaded ovc-agent binaries - kept off the image so they survive
+          # a redeploy. Only the api pod (not the worker) touches this path.
+          volumeMounts: [{ name: uploads, mountPath: /app/uploads }]
+          readinessProbe:
+            httpGet: { path: /api/openapi.json, port: 8000 }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /api/openapi.json, port: 8000 }
+            initialDelaySeconds: 20
+            periodSeconds: 20
+      volumes:
+        - name: uploads
+          persistentVolumeClaim: { claimName: ovc-backend-uploads }

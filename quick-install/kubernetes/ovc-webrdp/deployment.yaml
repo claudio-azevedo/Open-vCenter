@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ovc-webrdp
+  namespace: ovc-infra
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: ovc-webrdp } }
+  template:
+    metadata: { labels: { app: ovc-webrdp } }
+    spec:
+      containers:
+        - name: ovc-webrdp
+          image: ghcr.io/claudio-azevedo/ovc-webrdp:latest
+          envFrom: [{ configMapRef: { name: ovc-webrdp-configmap } }]
+          ports: [{ containerPort: 8080 }]
+          readinessProbe:
+            httpGet: { path: /webrdp/, port: 8080 }
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /webrdp/, port: 8080 }
+            initialDelaySeconds: 30
+            periodSeconds: 20
+        # guacd: the Guacamole proxy daemon. Runs as a sidecar (not its own
+        # Deployment/Service) - ovc-webrdp reaches it over localhost (same
+        # network namespace), and nothing outside the Pod needs to.
+        - name: ovc-guacd
+          image: guacamole/guacd:1.6.0
+          ports: [{ containerPort: 4822 }]
+          volumeMounts: [{ name: guacd-home, mountPath: /home/guacd }]
+          readinessProbe:
+            tcpSocket: { port: 4822 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket: { port: 4822 }
+            initialDelaySeconds: 15
+            periodSeconds: 20
+      volumes:
+        - name: guacd-home
+          emptyDir: {}

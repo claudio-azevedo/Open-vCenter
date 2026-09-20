@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovc-rabbitmq-configmap
+  namespace: ovc-infra
+data:
+  RABBITMQ_DEFAULT_USER: ovc
+  RABBITMQ_DEFAULT_PASS: PleaseChangeMe1
+  # Pin the Erlang node name so a pod restart keeps the same Mnesia DB
+  # (users, permissions, vhosts, durable queues).
+  RABBITMQ_NODENAME: rabbit@localhost

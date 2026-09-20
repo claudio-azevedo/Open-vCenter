@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ovc-rabbitmq
+  namespace: ovc-infra
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector: { matchLabels: { app: ovc-rabbitmq } }
+  template:
+    metadata: { labels: { app: ovc-rabbitmq } }
+    spec:
+      # local-path PVCs mount root-owned; let the non-root image write
+      # /var/lib/rabbitmq. OnRootMismatch keeps the kubelet from re-chmod'ing
+      # the tree on every restart, which would turn .erlang.cookie into 0660
+      # and make Erlang refuse to start.
+      securityContext:
+        fsGroup: 999
+        fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: ovc-rabbitmq
+          image: rabbitmq:4-management
+          envFrom: [{ configMapRef: { name: ovc-rabbitmq-configmap } }]
+          ports: [{ containerPort: 5672 }, { containerPort: 15672 }]
+          volumeMounts: [{ name: data, mountPath: /var/lib/rabbitmq }]
+          readinessProbe:
+            exec: { command: ["rabbitmq-diagnostics", "-q", "check_running"] }
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            timeoutSeconds: 10
+          livenessProbe:
+            exec: { command: ["rabbitmq-diagnostics", "-q", "ping"] }
+            initialDelaySeconds: 40
+            periodSeconds: 30
+            timeoutSeconds: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim: { claimName: ovc-rabbitmq-data }

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # ClusterIP - the only consumer is ovc-frontend's own server, in-cluster,
+  # via WEBRDP_ORIGIN (ovc-frontend/configmap.yaml): its server proxies
+  # /webrdp/tunnel to this Service, so the browser never talks to ovc-webrdp
+  # directly and no NodePort is needed. Add one (or use ingress.yaml in this
+  # folder) only for direct/manual access.
+  #
+  # NOTE: ovc-frontend images published before its WEBRDP_ORIGIN fix (see
+  # docs/kubernetes.md#ovc-frontend) bake in the OLD name
+  # "ovc-webrdp-service-nodeport" at build time and ignore WEBRDP_ORIGIN
+  # entirely - renaming this Service (no production deploy ever used one of
+  # those images) means it no longer matches what they expect. Only current
+  # (WEBRDP_ORIGIN-reading) images work against this Service as named.
+  name: ovc-webrdp-service
+  namespace: ovc-infra
+spec:
+  type: ClusterIP
+  selector: { app: ovc-webrdp }
+  ports: [{ name: http, port: 8080, targetPort: 8080 }]

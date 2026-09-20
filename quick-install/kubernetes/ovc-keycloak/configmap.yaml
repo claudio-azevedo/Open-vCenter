@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovc-keycloak-configmap
+  namespace: ovc-infra
+data:
+  KC_BOOTSTRAP_ADMIN_USERNAME: admin
+  KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+  # Postgres-backed so the realm (and any change made in the admin console
+  # after import) survives a pod restart - the docs/kubernetes.md example
+  # skips this and loses everything on restart (Keycloak's embedded dev DB).
+  KC_DB: postgres
+  KC_DB_URL: jdbc:postgresql://ovc-postgres-service:5432/keycloak
+  KC_DB_USERNAME: ovc
+  KC_DB_PASSWORD: PleaseChangeMe1
+  KC_HEALTH_ENABLED: "true"
+  KC_HOSTNAME_STRICT: "false" # dev: needed behind a NodePort / plain HTTP
+  KC_HTTP_ENABLED: "true"

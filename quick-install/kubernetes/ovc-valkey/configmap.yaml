@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovc-valkey-configmap
+  namespace: ovc-infra
+data:
+  VALKEY_ARGS: "--save 60 1 --protected-mode no"

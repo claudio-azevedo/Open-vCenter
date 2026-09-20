@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ovc-frontend-ingress
+  namespace: ovc-infra
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: frontend.openvcenter.local
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: ovc-backend-service-nodeport
+                port: { name: http }
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ovc-frontend-service-nodeport
+                port: { name: http }

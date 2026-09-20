@@ -36,7 +36,7 @@ on 2019/2016.
 | ✅ Available | Autostart order                                        |
 | ✅ Available | Batch start / stop                                     |
 | ✅ Available | Basic CPU / memory / network metrics for VMs and hosts |
-| ✅ Available | Remote HTML5 console do Windows/Linux VMs              |
+| ✅ Available | Remote HTML5 console to Windows/Linux VMs              |
 | 🗓 Planned   | vTPM support                                           |
 | 🗓 Planned   | vGPU management                                        |
 | 🗓 Planned   | Cluster host affinity / anti-affinity                  |

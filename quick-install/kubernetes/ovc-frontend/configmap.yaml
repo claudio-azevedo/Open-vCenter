@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovc-frontend-configmap
+  namespace: ovc-infra
+data:
+  # Server-only: base URL of ovc-backend's REST API, reached over the
+  # cluster-internal Service DNS.
+  API_URL: http://ovc-backend-service-nodeport:8000/api
+  # Base URL of ovc-webrdp (INCLUDING its context path) - ovc-frontend's own
+  # server proxies /webrdp/tunnel (VM Console tab) to it, server-to-server.
+  # Read at runtime on every request, same as API_URL above - confirmed
+  # working end-to-end (VMConnect + host RDP) against a real ovc-webrdp/guacd.
+  WEBRDP_ORIGIN: http://ovc-webrdp-service:8080/webrdp
+  VITE_OIDC_PROVIDER_NAME: Keycloak
+
+  # OIDC. ISSUER must be the URL the *browser* used to reach Keycloak (its
+  # Ingress host), since that's what ends up in the token's `iss` claim.
+  OIDC_ISSUER: http://keycloak.openvcenter.local/realms/ovc
+  OIDC_CLIENT_ID: ovc-frontend
+  OIDC_CLIENT_SECRET: ovc-frontend-dev-secret
+
+  # better-auth (cookie sessions, no database). BETTER_AUTH_SECRET is NOT
+  # here on purpose - it's a signing key, not a shared default. apply.sh
+  # generates it into the ovc-frontend-secret Secret on first run instead.
+  BETTER_AUTH_URL: http://frontend.openvcenter.local/frontend-api/auth
+
+  # VITE_API_URL / VITE_WEBRDP_URL are left unset on purpose - both default
+  # to relative paths (/frontend-api/api, /webrdp), correct for this
+  # single-domain deployment.

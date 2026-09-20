@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovc-postgres-initdb-configmap
+  namespace: ovc-infra
+data:
+  # Runs once, only when the data directory is empty (same contract as the
+  # docker-entrypoint-initdb.d mount in Docker Compose). Creates the separate
+  # "keycloak" database that ovc-keycloak's KC_DB_URL points at.
+  01-keycloak.sql: |
+    SELECT 'CREATE DATABASE keycloak OWNER ovc'
+    WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'keycloak')\gexec

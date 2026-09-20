@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ovc-backend-worker
+  namespace: ovc-infra
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: ovc-backend-worker } }
+  template:
+    metadata: { labels: { app: ovc-backend-worker } }
+    spec:
+      containers:
+        - name: ovc-backend-worker
+          image: ghcr.io/claudio-azevedo/ovc-backend:latest
+          command: ["python", "-m", "app.worker"]
+          envFrom: [{ configMapRef: { name: ovc-backend-configmap } }]

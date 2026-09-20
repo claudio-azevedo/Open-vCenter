@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ovc-keycloak
+  namespace: ovc-infra
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: ovc-keycloak } }
+  template:
+    metadata: { labels: { app: ovc-keycloak } }
+    spec:
+      containers:
+        - name: ovc-keycloak
+          image: quay.io/keycloak/keycloak:latest
+          # --import-realm creates the "ovc" realm on first boot; no-op after.
+          args: ["start-dev", "--import-realm"]
+          envFrom: [{ configMapRef: { name: ovc-keycloak-configmap } }]
+          ports: [{ containerPort: 8080 }]
+          volumeMounts:
+            - name: realm
+              mountPath: /opt/keycloak/data/import
+              readOnly: true
+          readinessProbe:
+            httpGet: { path: /health/ready, port: 9000 }
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            failureThreshold: 30
+          livenessProbe:
+            httpGet: { path: /health/live, port: 9000 }
+            initialDelaySeconds: 60
+            periodSeconds: 30
+      volumes:
+        - name: realm
+          configMap: { name: ovc-keycloak-realm-configmap }

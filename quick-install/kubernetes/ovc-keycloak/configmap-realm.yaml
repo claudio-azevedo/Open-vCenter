@@ -1,0 +1,113 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovc-keycloak-realm-configmap
+  namespace: ovc-infra
+data:
+  # Imported once by `start-dev --import-realm` on first boot (see
+  # deployment.yaml) - a no-op afterwards, so edits made later in the admin
+  # console are kept. Delete and reapply this folder to re-trigger an import
+  # (loses realm state: test users, any manual changes).
+  ovc-realm.json: |
+    {
+      "realm": "ovc",
+      "enabled": true,
+      "sslRequired": "none",
+      "registrationAllowed": false,
+      "loginWithEmailAllowed": true,
+      "duplicateEmailsAllowed": false,
+      "accessTokenLifespan": 300,
+      "ssoSessionIdleTimeout": 1800,
+      "ssoSessionMaxLifespan": 36000,
+      "roles": {
+        "client": {
+          "ovc-frontend": [
+            { "name": "ADMINISTRATOR", "description": "Full access to Open vCenter" },
+            { "name": "MANAGE_VMS", "description": "Start/stop VMs within granted scope" },
+            { "name": "VIEW_ONLY", "description": "Read-only access within granted scope" }
+          ]
+        }
+      },
+      "clients": [
+        {
+          "clientId": "ovc-frontend",
+          "name": "Open vCenter (frontend)",
+          "enabled": true,
+          "protocol": "openid-connect",
+          "publicClient": false,
+          "secret": "ovc-frontend-dev-secret",
+          "standardFlowEnabled": true,
+          "directAccessGrantsEnabled": false,
+          "serviceAccountsEnabled": false,
+          "redirectUris": [
+            "http://frontend.openvcenter.local/frontend-api/auth/callback/oidc",
+            "http://frontend.openvcenter.local/*"
+          ],
+          "webOrigins": ["http://frontend.openvcenter.local"],
+          "attributes": {
+            "post.logout.redirect.uris": "http://frontend.openvcenter.local/*"
+          },
+          "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "basic", "email"],
+          "protocolMappers": [
+            {
+              "name": "audience-ovc-frontend",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-audience-mapper",
+              "consentRequired": false,
+              "config": {
+                "included.client.audience": "ovc-frontend",
+                "id.token.claim": "false",
+                "access.token.claim": "true"
+              }
+            },
+            {
+              "name": "client-roles-ovc-frontend",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-client-role-mapper",
+              "consentRequired": false,
+              "config": {
+                "usermodel.clientRoleMapping.clientId": "ovc-frontend",
+                "claim.name": "resource_access.${client_id}.roles",
+                "jsonType.label": "String",
+                "multivalued": "true",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "userinfo.token.claim": "true"
+              }
+            }
+          ]
+        }
+      ],
+      "users": [
+        {
+          "username": "admin",
+          "email": "admin@ovc.local",
+          "emailVerified": true,
+          "enabled": true,
+          "firstName": "OVC",
+          "lastName": "Admin",
+          "credentials": [{ "type": "password", "value": "admin", "temporary": false }],
+          "clientRoles": { "ovc-frontend": ["ADMINISTRATOR"] }
+        },
+        {
+          "username": "operator",
+          "email": "operator@ovc.local",
+          "emailVerified": true,
+          "enabled": true,
+          "firstName": "OVC",
+          "lastName": "Operator",
+          "credentials": [{ "type": "password", "value": "operator", "temporary": false }],
+          "clientRoles": { "ovc-frontend": ["MANAGE_VMS"] }
+        },
+        {
+          "username": "noroles",
+          "email": "noroles@ovc.local",
+          "emailVerified": true,
+          "enabled": true,
+          "firstName": "No",
+          "lastName": "Roles",
+          "credentials": [{ "type": "password", "value": "noroles", "temporary": false }],
+          "clientRoles": {}
+        }
+      ]
+    }

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovc-webrdp-configmap
+  namespace: ovc-infra
+data:
+  WEBAPP_CONTEXT: webrdp
+  GUACD_HOSTNAME: localhost # guacd runs as a sidecar in this same Pod
+  GUACD_PORT: "4822"
+  WEBRDP_FRAME_ANCESTORS: "*" # dev: allow the frontend (any origin) to embed the console iframe

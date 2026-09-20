@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ovc-valkey
+  namespace: ovc-infra
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector: { matchLabels: { app: ovc-valkey } }
+  template:
+    metadata: { labels: { app: ovc-valkey } }
+    spec:
+      securityContext: { fsGroup: 1000 } # local-path PVCs mount root-owned
+      containers:
+        - name: ovc-valkey
+          image: valkey/valkey:8
+          command: ["sh", "-c", "exec valkey-server $VALKEY_ARGS"]
+          envFrom: [{ configMapRef: { name: ovc-valkey-configmap } }]
+          ports: [{ containerPort: 6379 }]
+          volumeMounts: [{ name: data, mountPath: /data }]
+          readinessProbe:
+            exec: { command: ["valkey-cli", "ping"] }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            exec: { command: ["valkey-cli", "ping"] }
+            initialDelaySeconds: 20
+            periodSeconds: 15
+      volumes:
+        - name: data
+          persistentVolumeClaim: { claimName: ovc-valkey-data }

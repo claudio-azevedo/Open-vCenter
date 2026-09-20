@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # ClusterIP - only ovc-backend/ovc-backend-worker (in-cluster) ever talk
+  # to Valkey, no NodePort needed.
+  name: ovc-valkey-service
+  namespace: ovc-infra
+spec:
+  type: ClusterIP
+  selector: { app: ovc-valkey }
+  ports: [{ name: valkey, port: 6379, targetPort: 6379 }]

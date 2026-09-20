@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovc-postgres-configmap
+  namespace: ovc-infra
+data:
+  # Credentials live here on purpose - see docs/kubernetes.md "Backing
+  # services". For an internet-facing deployment, move these into a Secret
+  # and switch envFrom.configMapRef to secretRef.
+  POSTGRES_DB: ovc
+  POSTGRES_USER: ovc
+  POSTGRES_PASSWORD: PleaseChangeMe1

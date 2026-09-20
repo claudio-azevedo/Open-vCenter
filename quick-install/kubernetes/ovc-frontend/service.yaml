@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ovc-frontend-service-nodeport
+  namespace: ovc-infra
+spec:
+  type: NodePort
+  selector: { app: ovc-frontend }
+  ports: [{ name: http, port: 3000, targetPort: 3000, nodePort: 30300 }]

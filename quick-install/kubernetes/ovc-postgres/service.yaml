@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # ClusterIP - only ovc-backend and ovc-keycloak (both in-cluster) ever
+  # talk to Postgres, no NodePort needed.
+  name: ovc-postgres-service
+  namespace: ovc-infra
+spec:
+  type: ClusterIP
+  selector: { app: ovc-postgres }
+  ports: [{ name: postgres, port: 5432, targetPort: 5432 }]
