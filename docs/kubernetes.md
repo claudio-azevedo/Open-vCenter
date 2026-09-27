@@ -15,7 +15,7 @@ Plain manifests for the whole stack, one namespace (`ovc-infra`) and
 
 {: .note }
 
-> **Ready to deploy?** [`quick-install/kubernetes`](https://github.com/claudio-azevedo/Open-Virtualization-Manager/tree/main/quick-install/kubernetes)
+> **Ready to deploy?** [`quick-install/kubernetes`](https://github.com/claudio-azevedo/Open-vCenter/tree/main/quick-install/kubernetes)
 > is a hardened, ready-to-apply version of everything below - Keycloak's
 > realm auto-imported, the session secret generated, NodePorts pinned and an
 > Ingress included. This page explains the *why* behind that design; the
@@ -99,7 +99,7 @@ browser never talks to `ovc-webrdp` directly.
 
 ## Deploying
 
-See [`quick-install/kubernetes`](https://github.com/claudio-azevedo/Open-Virtualization-Manager/tree/main/quick-install/kubernetes)
+See [`quick-install/kubernetes`](https://github.com/claudio-azevedo/Open-vCenter/tree/main/quick-install/kubernetes)
 for the actual manifests, NodePorts, optional Ingress and `apply.sh` /
 `delete.sh`.
 

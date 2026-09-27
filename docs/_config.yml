@@ -4,9 +4,9 @@ description: >-
   machines - a distributed system of a web frontend, a REST API + worker,
   and a per-host agent that communicate over RabbitMQ.
 
-# Set for project pages at https://claudio-azevedo.github.io/Open-Virtualization-Manager
-url: https://claudio-azevedo.github.io
-baseurl: /Open-Virtualization-Manager
+# Served from the custom domain (see CNAME), so the site lives at the root.
+url: https://openvcenter.com
+baseurl: ""
 
 theme: just-the-docs
 
@@ -18,7 +18,7 @@ aux_links:
   "Live Demo":
     - "https://demo.openvcenter.com/"
   "GitHub":
-    - "https://github.com/claudio-azevedo/Open-Virtualization-Manager"
+    - "https://github.com/claudio-azevedo/Open-vCenter"
 aux_links_new_tab: true
 
 # Footer

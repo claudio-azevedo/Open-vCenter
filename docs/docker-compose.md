@@ -16,7 +16,7 @@ published [container images](kubernetes#container-images).
 
 {: .note }
 
-> **Ready to deploy?** [`quick-install/docker`](https://github.com/claudio-azevedo/Open-Virtualization-Manager/tree/main/quick-install/docker)
+> **Ready to deploy?** [`quick-install/docker`](https://github.com/claudio-azevedo/Open-vCenter/tree/main/quick-install/docker)
 > is a hardened, ready-to-run version of this - everything behind a single
 > nginx entrypoint, Keycloak's realm auto-imported, the session secret
 > generated on first run. This page explains the *why*; the linked README

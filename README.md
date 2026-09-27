@@ -15,7 +15,7 @@
   <a href="https://openvcenter.com/running">Run it</a> ·
   <a href="https://openvcenter.com/docker-compose">Docker Compose</a> ·
   <a href="https://openvcenter.com/kubernetes">Kubernetes</a> ·
-  <a href="https://github.com/claudio-azevedo/Open-Virtualization-Manager/releases">Release Notes</a>
+  <a href="https://github.com/claudio-azevedo/Open-vCenter/releases">Release Notes</a>
 </p>
 
 ## Overview
