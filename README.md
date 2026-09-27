@@ -10,6 +10,7 @@
 
 <p align="center">
   <a href="https://openvcenter.com">Website</a> ·
+  <a href="https://demo.openvcenter.com/">Live Demo</a> ·
   <a href="https://openvcenter.com/architecture">Architecture</a> ·
   <a href="https://openvcenter.com/running">Run it</a> ·
   <a href="https://openvcenter.com/docker-compose">Docker Compose</a> ·

@@ -16,6 +16,7 @@ hardware, manage templates and ISOs, and open a VM console straight from the
 browser.
 {: .fs-6 .fw-300 }
 
+[Live Demo](https://demo.openvcenter.com/){: .btn .btn-green .mr-2 }
 [View on GitHub](https://github.com/claudio-azevedo/Open-vCenter){: .btn .btn-primary .mr-2 }
 [Architecture](architecture){: .btn }
 
