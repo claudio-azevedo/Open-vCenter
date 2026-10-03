@@ -4,7 +4,7 @@
 # entrypoint on http://localhost:
 #
 #   postgres 17 / rabbitmq / valkey / guacd / keycloak (postgres-backed,
-#   "ovc" realm auto-imported) / webrdp / backend + worker / frontend / nginx
+#   "ovc" realm auto-imported) / guacd / backend + worker / frontend / nginx
 #
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
@@ -58,7 +58,6 @@ Other services:
   keycloak admin console   http://localhost:8080         (admin/admin)
   rabbitmq management      http://localhost:15672        (ovc/PleaseChangeMe1)
   backend direct/Swagger   http://localhost:8000/api/docs
-  webrdp direct            http://localhost:8090/webrdp/
 
 Logs:  docker compose logs -f
 Stop:  ./down.sh

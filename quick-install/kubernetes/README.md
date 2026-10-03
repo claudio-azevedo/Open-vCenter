@@ -14,7 +14,7 @@ hardened for an actual "apply it and it works" deploy:
   public repo.
 - **NodePorts are pinned** to the values in the doc's NodePort table
   (some of the doc's own YAML leaves them to auto-assignment).
-- **Postgres, Valkey and webrdp are `ClusterIP`, not `NodePort`** - nothing
+- **Postgres, Valkey and guacd are `ClusterIP`, not `NodePort`** - nothing
   outside the cluster ever needs to reach them directly (see "NodePorts"
   below), unlike the narrative doc which exposes everything as `NodePort` for
   teaching purposes.
@@ -36,12 +36,14 @@ carry a `-service-nodeport` or `-service` suffix matching their actual
 | `ovc-rabbitmq`                         | `ovc-rabbitmq-service-nodeport` | NodePort  | `ovc-rabbitmq-configmap`                                  | `ovc-rabbitmq-data`   |
 | `ovc-valkey`                           | `ovc-valkey-service`            | ClusterIP | `ovc-valkey-configmap`                                    | `ovc-valkey-data`     |
 | `ovc-keycloak`                         | `ovc-keycloak-service-nodeport` | NodePort  | `ovc-keycloak-configmap`, `ovc-keycloak-realm-configmap`  | -                     |
-| `ovc-webrdp` (+ guacd sidecar)         | `ovc-webrdp-service`            | ClusterIP | `ovc-webrdp-configmap`                                    | -                     |
+| `ovc-guacd`                            | `ovc-guacd-service`             | ClusterIP | -                                                         | -                     |
 | `ovc-backend` (+ `ovc-backend-worker`) | `ovc-backend-service-nodeport`  | NodePort  | `ovc-backend-configmap`                                   | `ovc-backend-uploads` |
 | `ovc-frontend`                         | `ovc-frontend-service-nodeport` | NodePort  | `ovc-frontend-configmap` + `ovc-frontend-secret` (Secret) | -                     |
 
-`guacd` has no folder of its own - it runs as a sidecar container in the
-`ovc-webrdp` Pod (same as the narrative doc), reached over `localhost`.
+`guacd` renders the consoles. Only `ovc-frontend`'s server talks to it, through
+the `ovc-guacd-service` ClusterIP (`GUACD_URL: ovc-guacd-service:4822`) - the
+browser never does: the frontend serves the Guacamole console tunnel
+(`/webrdp/tunnel`) itself.
 
 All resources go into the **`ovc-infra`** namespace.
 
@@ -92,7 +94,7 @@ needs them):
 | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | postgres | Only `ovc-backend` and `ovc-keycloak` connect to it, both in-cluster.                                                                                                                                                                                                                                       |
 | valkey   | Only `ovc-backend`/`ovc-backend-worker` connect to it, in-cluster.                                                                                                                                                                                                                                          |
-| webrdp   | `ovc-frontend`'s own server proxies `/webrdp/tunnel` to it server-to-server (`WEBRDP_ORIGIN`) - the browser never talks to `ovc-webrdp` directly, so it needs no public exposure at all. `ovc-webrdp/ingress.yaml` still gives optional direct/debug access over `webrdp.openvcenter.local` if you want it. |
+| guacd    | Only `ovc-frontend`'s server connects to it (`GUACD_URL`), in-cluster - never the browser.                                                                                                                                                                                                                  |
 
 Add a `nodePort:` back to any of these `service.yaml` files (and switch
 `type` to `NodePort`) if you need direct external access for debugging.
@@ -105,7 +107,6 @@ One `ingress.yaml` per service folder, all under Traefik:
 | --------------------------------------- | ------------------------------------------------------ |
 | `rabbitmq-management.openvcenter.local` | `ovc-rabbitmq` management UI                           |
 | `keycloak.openvcenter.local`            | `ovc-keycloak`                                         |
-| `webrdp.openvcenter.local`              | `ovc-webrdp`                                           |
 | `frontend.openvcenter.local`            | `ovc-frontend` at `/`, `ovc-backend` at `/api` (debug) |
 
 Point every one of these hostnames at the node's IP (`/etc/hosts` on each
@@ -131,7 +132,7 @@ hostname; clients keep using the `30672` NodePort directly.
 kubectl apply -f 00-namespace.yaml
 kubectl create secret generic ovc-frontend-secret -n ovc-infra \
   --from-literal=BETTER_AUTH_SECRET="$(openssl rand -hex 32)"
-kubectl apply -f ovc-postgres/ -f ovc-rabbitmq/ -f ovc-valkey/ -f ovc-keycloak/ -f ovc-webrdp/ -f ovc-backend/ -f ovc-frontend/
+kubectl apply -f ovc-postgres/ -f ovc-rabbitmq/ -f ovc-valkey/ -f ovc-keycloak/ -f ovc-guacd/ -f ovc-backend/ -f ovc-frontend/
 ```
 
 Tear down (keeps PVCs + the frontend secret):
@@ -154,8 +155,8 @@ Tear down (keeps PVCs + the frontend secret):
   `ovc-keycloak/configmap-realm.yaml` later, either edit the client by hand
   in the admin console, or delete and reapply `ovc-keycloak/` (loses realm
   state) to re-trigger the import.
-- **webrdp / backend / frontend**: published as **public** GHCR images
-  (`ghcr.io/claudio-azevedo/ovc-webrdp`, `ovc-backend`, `ovc-frontend`), no
+- **backend / frontend**: published as **public** GHCR images
+  (`ghcr.io/claudio-azevedo/ovc-backend`, `ovc-frontend`), no
   `imagePullSecret` needed. If your own fork publishes to a private
   registry instead, add one to each Deployment.
 - **backend**: `OVC_AUTH_MODE=oidc` - the frontend's image always requires
@@ -165,13 +166,9 @@ Tear down (keeps PVCs + the frontend secret):
   RabbitMQ users on boot; `ovc-backend-worker` reuses the same
   image/ConfigMap with `command: python -m app.worker`.
 - **frontend**: all of its config is runtime (`ovc-frontend-configmap` +
-  `ovc-frontend-secret`), including `WEBRDP_ORIGIN` (the `/webrdp/tunnel`
-  proxy target for the VM Console tab) - confirmed working end-to-end
-  (VMConnect and host RDP both tested) against a real `ovc-webrdp`/guacd.
-  Requires an `ovc-frontend` image built after its `WEBRDP_ORIGIN` fix -
-  older images ignore this ConfigMap value and expect a Service named
-  `ovc-webrdp-service-nodeport` instead, baked in at build time. Not a
-  concern here (no production deploy ever used one of those images), but if
-  you ever need to run an older image against this manifest set, either add
-  that name as an extra alias on `ovc-webrdp/service.yaml`, or rebuild the
-  image.
+  `ovc-frontend-secret`), including `GUACD_URL` (`host:port`, or
+  `scheme://host:port` with the scheme ignored). The console tunnels live in
+  the frontend's memory, so keep `replicas: 1` or add sticky sessions.
+- **guacd** must resolve and reach your Hyper-V hosts (2179 / 3389) - add
+  `hostAliases` to `ovc-guacd/deployment.yaml` if their names aren't in DNS
+  (there's a commented example).

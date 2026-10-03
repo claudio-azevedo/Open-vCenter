@@ -33,10 +33,12 @@ services:
     ports: ["6379:6379"]
     volumes: ["valkey:/data"]
 
-  ovc-guacd: # only needed for the VM Console tab
+  # Renders the VM / host consoles. Only ovc-frontend's server talks to it
+  # (GUACD_URL below), over this Compose network - the browser never does,
+  # so no port is published.
+  ovc-guacd:
     image: guacamole/guacd:1.6.0
     restart: unless-stopped
-    ports: ["4822:4822"]
 
   # Postgres-backed, with the "ovc" realm auto-imported on first boot - no
   # manual realm/client creation, and it survives a container restart.
@@ -57,18 +59,6 @@ services:
       - ./keycloak/ovc-realm.json:/opt/keycloak/data/import/ovc-realm.json:ro
     depends_on:
       ovc-postgres: { condition: service_healthy }
-
-  ovc-webrdp:
-    image: ghcr.io/claudio-azevedo/ovc-webrdp:latest
-    restart: unless-stopped
-    depends_on: [ovc-guacd]
-    ports: ["8090:8080"]
-    environment:
-      GUACD_HOSTNAME: ovc-guacd
-      GUACD_PORT: "4822"
-      WEBAPP_CONTEXT: webrdp
-      # dev: allow the frontend (any origin) to embed the console iframe
-      WEBRDP_FRAME_ANCESTORS: "*"
 
   ovc-backend:
     image: ghcr.io/claudio-azevedo/ovc-backend:latest
@@ -117,19 +107,14 @@ services:
   ovc-frontend:
     image: ghcr.io/claudio-azevedo/ovc-frontend:latest
     restart: unless-stopped
-    depends_on: [ovc-backend]
+    depends_on: [ovc-backend, ovc-guacd]
     ports: ["3000:3000"] # direct/debug access only - see README
     environment:
       API_URL: http://ovc-backend:8000/api
-      # Base URL of ovc-webrdp - proxies /webrdp/tunnel (VM Console tab) to
-      # it, server-to-server, read at runtime on every request. Confirmed
-      # working end-to-end (VMConnect + host RDP) against a real
-      # ovc-webrdp/guacd. Requires an ovc-frontend image built after its
-      # WEBRDP_ORIGIN fix - older images ignore this and expect a Kubernetes
-      # Service named ovc-webrdp-service-nodeport instead, baked in at build
-      # time (not reachable from Compose at all). Not a concern here - no
-      # production deploy ever used one of those images.
-      WEBRDP_ORIGIN: http://ovc-webrdp:8080/webrdp
+      # guacd for the consoles. ovc-frontend serves the Guacamole tunnel
+      # (/webrdp/tunnel) itself and connects to guacd server-to-server, over
+      # the internal Compose network. host:port, default port 4822.
+      GUACD_URL: ovc-guacd:4822
       VITE_OIDC_PROVIDER_NAME: Keycloak
       OIDC_ISSUER: http://localhost:8080/realms/ovc
       OIDC_CLIENT_ID: ovc-frontend
@@ -139,9 +124,9 @@ services:
       # compose up` directly, or this is unset and the container fails fast.
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?run ./up.sh instead of docker compose directly}
       BETTER_AUTH_URL: http://localhost/frontend-api/auth
-      # VITE_API_URL / VITE_WEBRDP_URL are left unset on purpose - both
-      # default to relative paths (/frontend-api/api, /webrdp), correct once
-      # nginx puts everything on one domain (see nginx/nginx.conf).
+      # VITE_API_URL is left unset on purpose - it defaults to the relative
+      # /frontend-api/api, correct once nginx puts everything on one domain
+      # (see nginx/nginx.conf).
 
   # The "ingress": single entrypoint on :80, so the browser, Keycloak's
   # redirect_uri and OVC_PUBLIC_BASE_URL all agree on one origin

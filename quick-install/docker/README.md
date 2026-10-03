@@ -16,10 +16,10 @@ ports for the app itself. Compared to the narrative doc, this adds:
   `start-dev` with no `--import-realm` doesn't persist anything).
 - **`BETTER_AUTH_SECRET` is generated, not hardcoded** - `up.sh` writes it
   to `.env` on first run instead of shipping a fixed value in a public repo.
-- **`WEBRDP_ORIGIN` is set explicitly on `ovc-frontend`** - confirmed working
-  end-to-end (VMConnect and host RDP both tested) against a real
-  `ovc-webrdp`/guacd. Requires an `ovc-frontend` image built after its
-  `WEBRDP_ORIGIN` fix (see `docs/kubernetes.md` "ovc-frontend").
+- **Consoles need only `guacd`** - `ovc-frontend` serves the Guacamole
+  tunnel itself and reaches `ovc-guacd` over the internal Compose network
+  (`GUACD_URL: ovc-guacd:4822`). guacd publishes no port: the browser never
+  talks to it.
 - **`OVC_PUBLIC_BASE_URL` is set** - without it, the Setup Agent one-liner /
   agent binary downloads fail outright with `OVC_AGENT_STORAGE=local`.
 
@@ -48,7 +48,7 @@ they're plain-text in `keycloak/ovc-realm.json`.
 ## Layout
 
 ```
-docker-compose.yaml    everything: backing services, keycloak, webrdp,
+docker-compose.yaml    everything: backing services, keycloak, guacd,
                         backend + worker, frontend, nginx
 init-db/01-keycloak.sql   creates the "keycloak" DB on Postgres's first boot
 keycloak/ovc-realm.json   the "ovc" realm, imported automatically
@@ -65,9 +65,7 @@ up.sh / down.sh
 | rabbitmq AMQP       | 5672   |                                                     |
 | rabbitmq management | 15672  | web UI, `ovc` / `PleaseChangeMe1`                   |
 | valkey              | 6379   |                                                     |
-| guacd               | 4822   |                                                     |
 | keycloak            | 8080   | admin console (`admin`/`admin`) + `ovc` realm       |
-| webrdp (direct)     | 8090   | raw `ovc-webrdp` app - the frontend never uses this |
 | backend (direct)    | 8000   | REST API, Swagger at `/api/docs`                    |
 | frontend (direct)   | 3000   | debug only - login here fails, see below            |
 
@@ -96,8 +94,11 @@ started on `:3000` will misbehave past the login screen.
   the LAN - point this at the Docker host's LAN-reachable IP or hostname
   instead (edit it in `docker-compose.yaml` under `ovc-backend`, then
   `docker compose up -d ovc-backend` to pick it up).
-- **webrdp / backend / frontend**: published as **public** GHCR images
-  (`ghcr.io/claudio-azevedo/ovc-webrdp`, `ovc-backend`, `ovc-frontend`) -
-  no registry login needed to pull them.
-- **`WEBRDP_ORIGIN`**: read at runtime by `ovc-frontend` on every request
-  (see `docs/kubernetes.md` "ovc-frontend").
+- **backend / frontend**: published as **public** GHCR images
+  (`ghcr.io/claudio-azevedo/ovc-backend`, `ovc-frontend`) - no registry
+  login needed to pull them.
+- **guacd** (`ovc-guacd`, no published port): `GUACD_URL` on `ovc-frontend`
+  is read at runtime on every console connection (`host:port`, or
+  `scheme://host:port` with the scheme ignored). guacd has to resolve and
+  reach your Hyper-V hosts (2179 / 3389) - add `extra_hosts` to `ovc-guacd`
+  if their names aren't in DNS.

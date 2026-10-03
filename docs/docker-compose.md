@@ -11,8 +11,10 @@ nav_order: 6
 ---
 
 One `docker-compose.yaml` for the whole stack: backing services,
-`ovc-backend` (API + worker), `ovc-webrdp` and `ovc-frontend`, using the
-published [container images](kubernetes#container-images).
+`ovc-backend` (API + worker), `guacd` and `ovc-frontend`, using the
+published [container images](kubernetes#container-images). `guacd` stays on
+the internal Compose network: only `ovc-frontend`'s server talks to it
+(`GUACD_URL: ovc-guacd:4822`), never the browser.
 
 {: .note }
 

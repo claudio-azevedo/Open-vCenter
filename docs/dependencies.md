@@ -71,9 +71,11 @@ Register `${app}/frontend-api/auth/callback/oidc` as a redirect URI.
 
 ## guacd - 1.6.0
 
-**Used by:** `ovc-webrdp`
+**Used by:** `ovc-frontend` (its server, via `GUACD_URL`)
 
-The Guacamole proxy daemon. `ovc-webrdp` speaks the Guacamole protocol to it;
+The Guacamole proxy daemon. `ovc-frontend`'s server speaks the Guacamole
+protocol to it - the browser never connects to guacd, so in a deployment it
+only needs an internal address (a Compose service name or a ClusterIP Service);
 `guacd` speaks RDP (3389) and Hyper-V `vmconnect` (2179) to the target hosts, so
 it needs network reach to every Hyper-V host. Only required for the VM
 **Console** tab.
@@ -106,8 +108,11 @@ services:
     ports: ["6379:6379"]
     volumes: ["valkey:/data"]
 
-  guacd: # only needed for the VM Console tab
+  guacd: # only needed for the consoles
     image: guacamole/guacd:1.6.0
+    # Published only because a dev frontend (npm run dev) runs on the host and
+    # uses the default GUACD_URL=localhost:4822. In a full deployment keep it
+    # internal - see Docker Compose / Kubernetes.
     ports: ["4822:4822"]
 
 volumes: { pgdata: {}, rabbitmq: {}, valkey: {} }

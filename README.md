@@ -92,13 +92,13 @@ Each component lives in its own repository:
 | **ovc-frontend**     | React 19 / TanStack Start SSR web UI.                                               | https://github.com/claudio-azevedo/Open-vCenter-Frontend     |
 | **ovc-backend**      | FastAPI REST API **+** a RabbitMQ worker. Owns PostgreSQL and Valkey.               | https://github.com/claudio-azevedo/Open-vCenter-Backend      |
 | **ovc-agent-hyperv** | Go Windows service on every Hyper-V host. Executes the work, replies over RabbitMQ. | https://github.com/claudio-azevedo/Open-vCenter-Agent-HyperV |
-| **ovc-webrdp**       | Browser RDP / Hyper-V console gateway (Guacamole).                                  | https://github.com/claudio-azevedo/Open-vCenter-WebRDP       |
 
 See **[Components](https://openvcenter.com/components)** for each repository's stack
 and responsibilities in detail.
 
 The **backing services** (PostgreSQL, RabbitMQ, Valkey, an OIDC provider, and
-`guacd` for the console) are ordinary containers you run yourself - see
+`guacd` for the browser consoles - `ovc-frontend` talks to it directly) are
+ordinary containers you run yourself - see
 **[Dependencies](https://openvcenter.com/dependencies)**.
 
 ---

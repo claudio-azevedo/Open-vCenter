@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ovc-guacd
+  namespace: ovc-infra
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: ovc-guacd } }
+  template:
+    metadata: { labels: { app: ovc-guacd } }
+    spec:
+      # guacd connects to your Hyper-V hosts (2179 / 3389). If their names
+      # aren't in DNS, map them here:
+      # hostAliases:
+      #   - ip: "192.168.1.10"
+      #     hostnames: ["hyperv01"]
+      containers:
+        - name: ovc-guacd
+          image: guacamole/guacd:1.6.0
+          ports: [{ containerPort: 4822 }]
+          volumeMounts: [{ name: guacd-home, mountPath: /home/guacd }]
+          readinessProbe:
+            tcpSocket: { port: 4822 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket: { port: 4822 }
+            initialDelaySeconds: 15
+            periodSeconds: 20
+      volumes:
+        - name: guacd-home
+          emptyDir: {}

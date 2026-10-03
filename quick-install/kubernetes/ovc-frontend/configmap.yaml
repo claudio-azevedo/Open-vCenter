@@ -7,11 +7,10 @@ data:
   # Server-only: base URL of ovc-backend's REST API, reached over the
   # cluster-internal Service DNS.
   API_URL: http://ovc-backend-service-nodeport:8000/api
-  # Base URL of ovc-webrdp (INCLUDING its context path) - ovc-frontend's own
-  # server proxies /webrdp/tunnel (VM Console tab) to it, server-to-server.
-  # Read at runtime on every request, same as API_URL above - confirmed
-  # working end-to-end (VMConnect + host RDP) against a real ovc-webrdp/guacd.
-  WEBRDP_ORIGIN: http://ovc-webrdp-service:8080/webrdp
+  # guacd for the consoles. ovc-frontend serves the Guacamole tunnel
+  # (/webrdp/tunnel) itself and connects to guacd server-to-server, over the
+  # cluster-internal Service DNS (ovc-guacd/). host:port.
+  GUACD_URL: ovc-guacd-service:4822
   VITE_OIDC_PROVIDER_NAME: Keycloak
 
   # OIDC. ISSUER must be the URL the *browser* used to reach Keycloak (its
@@ -25,6 +24,5 @@ data:
   # generates it into the ovc-frontend-secret Secret on first run instead.
   BETTER_AUTH_URL: http://frontend.openvcenter.local/frontend-api/auth
 
-  # VITE_API_URL / VITE_WEBRDP_URL are left unset on purpose - both default
-  # to relative paths (/frontend-api/api, /webrdp), correct for this
-  # single-domain deployment.
+  # VITE_API_URL is left unset on purpose - it defaults to the relative
+  # /frontend-api/api, correct for this single-domain deployment.

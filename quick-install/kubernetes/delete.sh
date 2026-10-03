@@ -7,7 +7,7 @@
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-for svc in ovc-frontend ovc-backend ovc-webrdp ovc-keycloak ovc-valkey ovc-rabbitmq ovc-postgres; do
+for svc in ovc-frontend ovc-backend ovc-guacd ovc-keycloak ovc-valkey ovc-rabbitmq ovc-postgres; do
   kubectl delete -f "$svc/" --ignore-not-found
 done
 

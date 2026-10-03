@@ -28,7 +28,7 @@ Default local endpoints assumed by the other repos' `.env.example` files:
 | PostgreSQL | `localhost:5432`              | `ovc` / `ovc123`, db `ovc` |
 | RabbitMQ   | `localhost:5672` (UI `15672`) | `ovc` / `ovc123`           |
 | Valkey     | `localhost:6379`              | -                          |
-| guacd      | `localhost:4822`              | -                          |
+| guacd      | `localhost:4822`              | - (`ovc-frontend`'s `GUACD_URL` default) |
 
 ## 2. Backend - `ovc-backend`
 
@@ -86,7 +86,7 @@ The steps above are for local, per-process development. To run the whole
 stack as containers instead:
 
 - **[Docker Compose](docker-compose)** - one `docker-compose.yaml` for
-  everything (backing services, backend API + worker, webrdp), using the
+  everything (backing services, guacd, backend API + worker, frontend), using the
   published container images.
 - **[Kubernetes](kubernetes)** - the same stack as plain manifests, targeting
   a single-node k3s cluster with `NodePort` services.

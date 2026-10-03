@@ -23,14 +23,13 @@ Plain manifests for the whole stack, one namespace (`ovc-infra`) and
 
 ## Container images
 
-`ovc-frontend`, `ovc-backend` and `ovc-webrdp` are built by GitHub Actions and
-published to GHCR:
+`ovc-frontend` and `ovc-backend` are built by GitHub Actions and published to
+GHCR (`guacd` is the upstream `guacamole/guacd:1.6.0`):
 
 | Component      | Image                                         |
 | -------------- | --------------------------------------------- |
 | `ovc-frontend` | `ghcr.io/claudio-azevedo/ovc-frontend:latest` |
 | `ovc-backend`  | `ghcr.io/claudio-azevedo/ovc-backend:latest`  |
-| `ovc-webrdp`   | `ghcr.io/claudio-azevedo/ovc-webrdp:latest`   |
 
 `ovc-backend`'s worker Deployment reuses the same `ovc-backend` image with
 `command: python -m app.worker` instead of `uvicorn`. `ovc-agent-hyperv` isn't
@@ -46,8 +45,8 @@ PostgreSQL, RabbitMQ and Valkey, each with its own PVC:
   a non-empty directory (`lost+found`, etc).
 - `RABBITMQ_NODENAME` pins the Erlang node name so a pod restart keeps the
   same Mnesia database.
-- `guacd` isn't a backing service of its own - it runs as a sidecar in the
-  `ovc-webrdp` Pod, see [ovc-webrdp](#ovc-webrdp) below.
+- `guacd` (no PVC) is its own Deployment behind a ClusterIP Service, see
+  [ovc-backend and ovc-frontend](#ovc-backend-and-ovc-frontend) below.
 
 Per the project convention, container env vars - passwords included - live
 in ConfigMaps. For a production deployment, move the passwords into
@@ -76,14 +75,6 @@ The app recognizes exactly one role by name:
 For a first deployment, assign `ADMINISTRATOR` to at least one user so
 someone can log in and add hosts.
 
-## ovc-webrdp
-
-`ovc-guacd` runs as a sidecar in the same Pod as `ovc-webrdp`, matching
-`ovc-webrdp`'s own
-[`deployment-app.yaml`](https://github.com/claudio-azevedo/Open-vCenter-WebRDP/blob/main/deployment-app.yaml) -
-it reaches `guacd` over `localhost` (same network namespace), and nothing
-outside the Pod needs to, so there's no separate `guacd` Service.
-
 ## ovc-backend and ovc-frontend
 
 The API and the worker are two Deployments sharing one image and ConfigMap.
@@ -91,11 +82,16 @@ The API and the worker are two Deployments sharing one image and ConfigMap.
 uploaded `ovc-agent` binaries survive a redeploy.
 
 All of `ovc-frontend`'s config is **runtime** (changeable without a
-rebuild): `API_URL`, `WEBRDP_ORIGIN`, `OIDC_*` and `BETTER_AUTH_*` are read
-from the environment on every request. `WEBRDP_ORIGIN` is the base URL of
-`ovc-webrdp` (including its context path) - `ovc-frontend`'s own server
-proxies the Console tab's Guacamole tunnel to it, server-to-server, so the
-browser never talks to `ovc-webrdp` directly.
+rebuild): `API_URL`, `GUACD_URL`, `OIDC_*` and `BETTER_AUTH_*` are read
+from the environment at runtime.
+
+`ovc-guacd` is a plain Deployment behind the `ovc-guacd-service` ClusterIP
+Service - the same shape as the Docker Compose setup. The frontend's own
+server serves the consoles' Guacamole tunnel (`/webrdp/tunnel`) and talks to
+guacd over the cluster-internal DNS (`GUACD_URL: ovc-guacd-service:4822`); the
+browser never connects to guacd, so it needs no NodePort. The console tunnels
+live in the frontend's memory, so keep one frontend replica or use sticky
+sessions.
 
 ## Deploying
 

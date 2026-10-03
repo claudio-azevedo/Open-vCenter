@@ -3,7 +3,7 @@
 # apply.sh - deploy Open vCenter to a k3s cluster in one shot:
 #
 #   postgres 17 / rabbitmq / valkey / keycloak (postgres-backed, "ovc" realm
-#   auto-imported) / webrdp+guacd / backend+worker / frontend
+#   auto-imported) / guacd / backend+worker / frontend
 #
 # All resources live in the "ovc-infra" namespace. Services are NodePort (no
 # LoadBalancer assumed). Data is on ReadWriteOnce PVCs (k3s local-path).
@@ -24,7 +24,7 @@ if ! kubectl -n ovc-infra get secret ovc-frontend-secret >/dev/null 2>&1; then
     --from-literal=BETTER_AUTH_SECRET="$(openssl rand -hex 32)"
 fi
 
-for svc in ovc-postgres ovc-rabbitmq ovc-valkey ovc-keycloak ovc-webrdp ovc-backend ovc-frontend; do
+for svc in ovc-postgres ovc-rabbitmq ovc-valkey ovc-keycloak ovc-guacd ovc-backend ovc-frontend; do
   echo "==> applying $svc"
   kubectl apply -f "$svc/"
 done
@@ -35,7 +35,7 @@ kubectl -n ovc-infra rollout status deploy/ovc-postgres       --timeout=180s
 kubectl -n ovc-infra rollout status deploy/ovc-rabbitmq       --timeout=180s
 kubectl -n ovc-infra rollout status deploy/ovc-valkey         --timeout=120s
 kubectl -n ovc-infra rollout status deploy/ovc-keycloak       --timeout=300s || true
-kubectl -n ovc-infra rollout status deploy/ovc-webrdp         --timeout=120s
+kubectl -n ovc-infra rollout status deploy/ovc-guacd          --timeout=120s
 kubectl -n ovc-infra rollout status deploy/ovc-backend        --timeout=180s
 kubectl -n ovc-infra rollout status deploy/ovc-backend-worker --timeout=180s
 kubectl -n ovc-infra rollout status deploy/ovc-frontend       --timeout=120s

@@ -28,6 +28,10 @@ the selection), a full-width **Recent Tasks** dock, and a status bar.
   provider. `OVC_AUTH_MODE=stub` (same variable as `ovc-backend`) skips login.
 - **Data** is polled by TanStack Query (clusters 30 s, hosts 15 s, VMs 10 s).
 - **Power actions** are optimistic + task-tracked.
+- **Consoles** (Hyper-V `vmconnect` on 2179, host RDP on 3389): the page embeds
+  a `guacamole-common-js` client; the frontend server serves its Guacamole
+  HTTP tunnel (`/webrdp/tunnel`) and speaks the Guacamole protocol to `guacd`
+  (`GUACD_URL`) itself. Audio and file transfer are always disabled.
 - Custom Win95 component kit under `src/components/win95/`.
 
 ## ovc-backend
@@ -68,15 +72,6 @@ Installed on each Hyper-V host. Communicates **exclusively** via RabbitMQ.
     `resume_fallback`, `restart`)
   - **periodic inventories:** `agent_status`, `vm_inventory`, `host_hwinventory`,
     `template_inventory`, `iso_inventory`
-
-## ovc-webrdp
-
-**Java (Apache Guacamole client) + `guacd`**
-
-Browser RDP / Hyper-V `vmconnect` (port 2179) gateway. The frontend's VM
-**Console** tab embeds a `guacamole-common-js` client that connects to the
-webrdp HTTP tunnel at `${VITE_WEBRDP_URL}/tunnel`. Runs with
-`WEBAPP_CONTEXT=webrdp` and needs a `guacd` sidecar.
 
 ## Backing services
 
