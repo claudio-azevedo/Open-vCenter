@@ -1,0 +1,64 @@
+---
+title: Architecture
+description: "How a request flows from the browser to a Hyper-V host and back: the components, the RabbitMQ queues and the task lifecycle."
+---
+
+import StackExplorerIsland from "../../../components/stack/StackExplorerIsland.astro";
+
+## The big picture
+
+Click a component to see its connections and configuration, or press
+**Follow a request** to walk through [how a request flows](#how-a-request-flows).
+
+<StackExplorerIsland />
+
+- The **frontend** is the only REST client. The browser only ever calls the
+  frontend; the frontend server proxies `/api/*` to the backend and attaches the
+  OIDC bearer token, so no identity or scope is ever sent from the browser.
+- The **backend** owns PostgreSQL and Valkey. It publishes `AgentRequest`
+  messages and records a `Task` for every mutating operation; it never blocks on
+  the agent.
+- Each **agent** consumes its own `<hostid>.request` queue, runs the work on the
+  host (mostly PowerShell / Hyper-V cmdlets), and publishes progress, results and
+  periodic inventory back onto per-host queues.
+
+## Two backend processes
+
+| Process    | Command                | Role                                                                                                                 |
+| ---------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **API**    | `uvicorn app.main:app` | Serves `/api/*`, publishes agent requests, creates tasks. On startup ensures each host's RabbitMQ queues exist.      |
+| **Worker** | `python -m app.worker` | Consumes every host's `response` + inventory queues, updates PostgreSQL and the Valkey cache, times out stale tasks. |
+
+## How a request flows
+
+1. An operator clicks **Start** on a VM in the frontend.
+2. The frontend optimistically flips the VM to a transitional state and calls
+   `POST /api/vms/{id}/actions/start`.
+3. The backend API takes the per-VM lock in Valkey, writes a `Task` row
+   (`queued`), publishes an `AgentRequest` to `<hostid>.request` with
+   `correlation_id = task id`, and returns `202 { task }`.
+4. The agent on that host consumes the request, runs the Hyper-V operation, and
+   publishes progress messages and a final result to `<hostid>.response`.
+5. The backend worker consumes the response, updates the `Task` (and the VM row
+   live from the result payload), releases the lock, and refreshes the cache.
+6. The frontend's `TaskWatcher` polls `GET /tasks/:id` until it reaches a
+   terminal status, then refetches inventory. The task appears in the Recent
+   Tasks dock with initiator, progress, status and timestamps.
+
+## RabbitMQ queues (per host)
+
+`<hostid>` is a random 10-char `[A-Za-z0-9]` string assigned when the host is
+registered.
+
+| Queue                         | Direction       | Notes                                                      |
+| ----------------------------- | --------------- | ---------------------------------------------------------- |
+| `<hostid>.request`            | backend → agent | JSON `AgentRequest`, `correlation_id = task id`            |
+| `<hostid>.response`           | agent → backend | Task progress + final result                               |
+| `<hostid>.agent_status`       | agent → backend | Last value only - version, intervals, hypervisor, liveness |
+| `<hostid>.vm_inventory`       | agent → backend | Last value only                                            |
+| `<hostid>.host_inventory`     | agent → backend | Last value only - hardware + folders                       |
+| `<hostid>.template_inventory` | agent → backend | Last value only                                            |
+| `<hostid>.iso_inventory`      | agent → backend | Last value only                                            |
+
+The last-value queues are declared with `x-max-length=1` / `x-overflow=drop-head`,
+so a slow consumer always sees the latest snapshot and never a backlog.

@@ -1,0 +1,30 @@
+---
+// The logo's three Win95-style server bays (docs/assets/ovc-logo.svg),
+// redrawn without the wordmark so it stays crisp at small sizes.
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+const bays = [
+  { y: 0, led: "#00cc33" },
+  { y: 46, led: "#00d2e6" },
+  { y: 92, led: "#ffd400" },
+];
+---
+
+<svg viewBox="-2 -2 180 134" class={className} aria-hidden="true">
+  {
+    bays.map(({ y, led }) => (
+      <g transform={`translate(0 ${y})`}>
+        <rect width="176" height="38" fill="#c0c0c0" stroke="#000" stroke-width="3" />
+        <path d="M4 34V4h168" fill="none" stroke="#fff" stroke-width="3" />
+        <path d="M4 34h168V4" fill="none" stroke="#808080" stroke-width="3" />
+        <rect x="12" y="13" width="12" height="12" fill={led} stroke="#000" stroke-width="2" />
+        <rect x="34" y="11" width="62" height="16" fill="#000080" stroke="#000" stroke-width="2" />
+        {[110, 124, 138, 152].map((x) => (
+          <rect x={x} y="12" width="8" height="14" fill="#808080" />
+        ))}
+      </g>
+    ))
+  }
+</svg>

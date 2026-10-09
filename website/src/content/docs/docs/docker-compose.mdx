@@ -1,0 +1,55 @@
+---
+title: Docker Compose
+description: "Run the whole Open vCenter stack with Docker Compose and the published container images."
+---
+
+import StackExplorerIsland from "../../../components/stack/StackExplorerIsland.astro";
+
+One `docker-compose.yaml` for the whole stack: backing services,
+`ovc-backend` (API + worker), `guacd` and `ovc-frontend`, using the
+published [container images](/docs/kubernetes/#container-images). `guacd` stays on
+the internal Compose network: only `ovc-frontend`'s server talks to it
+(`GUACD_URL: ovc-guacd:4822`), never the browser.
+
+:::note[Ready to deploy?]
+[`quick-install/docker`](https://github.com/claudio-azevedo/Open-vCenter/tree/main/quick-install/docker)
+is a hardened, ready-to-run version of this - everything behind a single
+nginx entrypoint, Keycloak's realm auto-imported, the session secret
+generated on first run. This page explains the *why*; the linked README
+has the actual compose file and `up.sh` / `down.sh`.
+:::
+
+<StackExplorerIsland mode="docker" />
+
+## OIDC login
+
+By default `ovc-backend` and `ovc-frontend` wire up to Keycloak (or any
+other OIDC/OAuth2 provider) for real login - see
+[OIDC provider](/docs/kubernetes/#oidc-provider) and [Roles](/docs/kubernetes/#roles) for
+how roles are read and what each one grants.
+
+**No IdP, quick testing only:** set `OVC_AUTH_MODE: stub` on both
+`ovc-backend` and `ovc-frontend` instead - every request is then treated as
+a fixed admin user, no login and no IdP needed. `ovc-frontend` shows a
+standing warning dialog while this is active; never use it beyond a trusted
+network. For local UI development the bypass is also available outside
+Docker - see [Running in dev mode](/docs/running/#3-frontend---ovc-frontend).
+
+## Bring it up
+
+```sh
+git clone https://github.com/claudio-azevedo/Open-vCenter.git
+cd Open-vCenter/quick-install/docker
+./up.sh
+curl localhost:8000/api/health   # {"ok":true,"db":true,"cache":true,"rabbit":true}
+```
+
+`up.sh` generates the frontend's session secret into `.env` on first run, so
+use it rather than a bare `docker compose up`. Open `http://localhost` and log
+in as `admin` / `admin`. `./down.sh` tears it down (`--purge` also drops the
+data volumes and `.env`).
+
+Hosts are added and agents installed from the frontend once you're logged
+in - see
+[Running in dev mode › Agent](/docs/running/#4-agent---ovc-agent-hyperv-on-each-hyper-v-host)
+for the Add Host / Setup Agent steps.

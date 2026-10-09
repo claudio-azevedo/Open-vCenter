@@ -1,0 +1,15 @@
+# Old GitHub Pages (Jekyll) URLs -> the docs. Served by Workers static assets.
+/architecture /docs/architecture/ 301
+/architecture.html /docs/architecture/ 301
+/components /docs/components/ 301
+/components.html /docs/components/ 301
+/dependencies /docs/dependencies/ 301
+/dependencies.html /docs/dependencies/ 301
+/running /docs/running/ 301
+/running.html /docs/running/ 301
+/docker-compose /docs/docker-compose/ 301
+/docker-compose.html /docs/docker-compose/ 301
+/kubernetes /docs/kubernetes/ 301
+/kubernetes.html /docs/kubernetes/ 301
+/screenshots /#screenshots 301
+/screenshots.html /#screenshots 301

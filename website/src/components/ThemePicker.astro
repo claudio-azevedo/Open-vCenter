@@ -1,0 +1,116 @@
+---
+// Skin menu for the header (landing page and docs). Several instances can
+// share a page - the docs render one in the header and one in the mobile menu.
+import { SITE_THEMES, SITE_THEME_KEY } from "../lib/site-theme";
+
+interface Props {
+  /** On Starlight pages, also switch Starlight's own light/dark theme. */
+  starlight?: boolean;
+}
+
+const { starlight = false } = Astro.props;
+---
+
+<div
+  class="theme-picker relative"
+  data-theme-picker
+  data-storage-key={SITE_THEME_KEY}
+  data-starlight={starlight ? "true" : undefined}
+>
+  <button
+    type="button"
+    class="icon-btn !size-9"
+    aria-haspopup="menu"
+    aria-expanded="false"
+    aria-label="Theme"
+    title="Theme"
+    data-theme-picker-toggle
+  >
+    <svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 22a10 10 0 1 1 10-10c0 2.5-2 3.5-3.5 3.5H16a2 2 0 0 0-1.5 3.3A1.9 1.9 0 0 1 12 22Z"></path>
+      <circle cx="7.5" cy="10.5" r="1.2" fill="currentColor"></circle>
+      <circle cx="12" cy="7" r="1.2" fill="currentColor"></circle>
+      <circle cx="16.5" cy="10.5" r="1.2" fill="currentColor"></circle>
+    </svg>
+  </button>
+  <div class="theme-menu on-window" role="menu" aria-label="Theme" hidden data-theme-picker-menu>
+    {
+      SITE_THEMES.map((theme) => (
+        <button type="button" role="menuitemradio" aria-checked="false" class="theme-menu-item" data-theme-option={theme.id}>
+          <span class="theme-menu-swatch" style={`background: ${theme.swatch}`} aria-hidden="true" />
+          <span>{theme.label}</span>
+          <svg viewBox="0 0 24 24" class="theme-menu-check" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path d="M5 12.5 10 17.5 19 7" />
+          </svg>
+        </button>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  const root = document.documentElement;
+
+  function apply(theme: string, picker: HTMLElement) {
+    root.dataset.siteTheme = theme;
+    if (picker.dataset.starlight) root.dataset.theme = theme === "modern" ? "dark" : "light";
+    try {
+      localStorage.setItem(picker.dataset.storageKey!, theme);
+    } catch {
+      // Private mode or blocked storage: the choice just won't persist.
+    }
+    sync();
+  }
+
+  function sync() {
+    const current = root.dataset.siteTheme ?? "modern";
+    document.querySelectorAll<HTMLElement>("[data-theme-option]").forEach((option) => {
+      option.setAttribute("aria-checked", String(option.dataset.themeOption === current));
+    });
+  }
+
+  function close(picker: Element) {
+    picker.querySelector<HTMLElement>("[data-theme-picker-menu]")!.hidden = true;
+    picker.querySelector("[data-theme-picker-toggle]")!.setAttribute("aria-expanded", "false");
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-theme-picker]").forEach((picker) => {
+    const toggle = picker.querySelector<HTMLButtonElement>("[data-theme-picker-toggle]")!;
+    const menu = picker.querySelector<HTMLElement>("[data-theme-picker-menu]")!;
+
+    toggle.addEventListener("click", () => {
+      const open = menu.hidden;
+      document.querySelectorAll("[data-theme-picker]").forEach(close);
+      menu.hidden = !open;
+      toggle.setAttribute("aria-expanded", String(open));
+      if (open) menu.querySelector<HTMLElement>('[aria-checked="true"]')?.focus();
+    });
+    menu.querySelectorAll<HTMLElement>("[data-theme-option]").forEach((option) =>
+      option.addEventListener("click", () => {
+        apply(option.dataset.themeOption!, picker);
+        close(picker);
+        toggle.focus();
+      }),
+    );
+    menu.addEventListener("keydown", (event) => {
+      const items = [...menu.querySelectorAll<HTMLElement>("[data-theme-option]")];
+      const index = items.indexOf(document.activeElement as HTMLElement);
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        const step = event.key === "ArrowDown" ? 1 : -1;
+        items[(index + step + items.length) % items.length].focus();
+      } else if (event.key === "Escape") {
+        close(picker);
+        toggle.focus();
+      }
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    document.querySelectorAll("[data-theme-picker]").forEach((picker) => {
+      if (!picker.contains(event.target as Node)) close(picker);
+    });
+  });
+
+  sync();
+</script>

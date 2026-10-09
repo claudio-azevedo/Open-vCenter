@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "openvcenter-website",
+  "compatibility_date": "2026-10-01",
+  // Static site: Astro builds to dist/ and Workers serves it as static assets.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}

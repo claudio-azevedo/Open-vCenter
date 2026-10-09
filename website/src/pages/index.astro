@@ -1,0 +1,349 @@
+---
+import { Image } from "astro:assets";
+import { Code } from "astro:components";
+import {
+  Activity,
+  Boxes,
+  Camera,
+  Container,
+  Cpu,
+  Disc3,
+  HardDrive,
+  ListOrdered,
+  MonitorPlay,
+  Play,
+  Ship,
+  Sparkles,
+} from "lucide-react";
+import Base from "../layouts/Base.astro";
+import GitHubIcon from "../components/GitHubIcon.astro";
+import StackExplorerIsland from "../components/stack/StackExplorerIsland.astro";
+import { DEMO, GITHUB } from "../lib/stack-model";
+import vmDetails from "../assets/screenshots/vm-details.png";
+import hostDetails from "../assets/screenshots/host-details.png";
+import hostMetrics from "../assets/screenshots/host-metrics.png";
+import vmCreate from "../assets/screenshots/vm-create.png";
+import vmConsole from "../assets/screenshots/vm-console.png";
+
+const features = [
+  { icon: Cpu, title: "BIOS & UEFI VMs", text: "Create BIOS or UEFI VMs, from scratch or from a template, and edit CPU and memory." },
+  { icon: HardDrive, title: "Disks & virtual NICs", text: "Add and remove virtual disks; manage network adapters, virtual switches and VLANs." },
+  { icon: Camera, title: "Snapshots", text: "Take, apply and delete checkpoints without leaving the console." },
+  { icon: Disc3, title: "ISO mounting", text: "Mount and eject ISOs from the host's library on any VM." },
+  { icon: ListOrdered, title: "Autostart order", text: "Control which VMs come back first, and with what delay." },
+  { icon: Play, title: "Batch start / stop", text: "Power whole groups of VMs on or off in a single task." },
+  { icon: Activity, title: "Metrics", text: "CPU, memory and network charts for every VM and host." },
+  { icon: MonitorPlay, title: "HTML5 console", text: "RDP and vmconnect straight in the browser, Windows or Linux guests." },
+];
+
+const planned = [
+  "vTPM support",
+  "vGPU management",
+  "Host affinity / anti-affinity",
+  "DRS-like storage balancing",
+  "Non-Hyper-V agents",
+];
+
+const screenshots = [
+  { image: hostMetrics, title: "Host metrics", caption: "CPU, memory and network over time for a host." },
+  { image: vmCreate, title: "Create a VM", caption: "CPU, memory, disks and network in one dialog." },
+  { image: vmConsole, title: "HTML5 console", caption: "The RDP / vmconnect console, embedded in the page." },
+  { image: hostDetails, title: "Host details", caption: "Hardware inventory and the VMs a host is running." },
+  { image: vmDetails, title: "VM details", caption: "Inventory tree on the left, VM summary, hardware and disks on the right." },
+];
+
+const repos = [
+  {
+    name: "ovc-frontend",
+    stack: "React 19 · TanStack Start · Tailwind",
+    text: "The web console. The only REST client - it proxies the API and serves the console tunnel.",
+    href: "https://github.com/claudio-azevedo/Open-vCenter-Frontend",
+  },
+  {
+    name: "ovc-backend",
+    stack: "Python · FastAPI · SQLAlchemy · aio-pika",
+    text: "REST API plus a RabbitMQ worker. Owns PostgreSQL and Valkey, enforces RBAC.",
+    href: "https://github.com/claudio-azevedo/Open-vCenter-Backend",
+  },
+  {
+    name: "ovc-agent-hyperv",
+    stack: "Go · Windows service · PowerShell",
+    text: "Runs on every Hyper-V host. Talks to the backend exclusively over RabbitMQ.",
+    href: "https://github.com/claudio-azevedo/Open-vCenter-Agent-HyperV",
+  },
+];
+
+const clone = `git clone ${GITHUB}.git`;
+const install = [
+  {
+    id: "docker",
+    icon: Container,
+    title: "Docker Compose",
+    text: "Everything on one machine behind nginx. Open http://localhost and log in as admin / admin.",
+    code: `${clone}\ncd Open-vCenter/quick-install/docker\n./up.sh`,
+    href: "/docs/docker-compose/",
+  },
+  {
+    id: "k8s",
+    icon: Ship,
+    title: "Kubernetes",
+    text: "Plain manifests in the ovc-infra namespace, Traefik Ingress, PVCs for data.",
+    code: `${clone}\ncd Open-vCenter/quick-install/kubernetes\n./apply.sh`,
+    href: "/docs/kubernetes/",
+  },
+];
+---
+
+<Base>
+  <!-- Hero -->
+  <section class="relative isolate overflow-hidden">
+    <div aria-hidden="true" class="hero-glow absolute inset-0 -z-10"></div>
+    <div aria-hidden="true" class="hero-grid absolute inset-0 -z-10"></div>
+    <div class="container-page pt-16 pb-10 text-center sm:pt-24">
+      <a
+        href={`${GITHUB}/releases`}
+        target="_blank"
+        rel="noreferrer"
+        class="inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.03] px-3 py-1 text-xs text-muted transition hover:border-white/25 hover:text-fg"
+      >
+        <Sparkles size={13} className="text-brand" />
+        Open source · Apache 2.0 · Microsoft Hyper-V
+      </a>
+      <h1 class="mx-auto mt-6 max-w-4xl text-4xl font-semibold tracking-tight text-balance sm:text-6xl lg:text-7xl">
+        All Virtual Machines, <span class="text-gradient">one web console.</span>
+      </h1>
+      <p class="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-pretty text-muted sm:text-lg">
+        Open vCenter is an open source virtualization center built to manage hundreds of thousands of VMs. Browse
+        clusters, hosts and VMs, run power and lifecycle actions, edit hardware, manage templates and ISOs, and open
+        a console - all from the browser.
+      </p>
+      <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
+        <a href={DEMO} target="_blank" rel="noreferrer" class="btn-primary">Try the live demo →</a>
+        <a href={GITHUB} target="_blank" rel="noreferrer" class="btn-ghost">
+          <GitHubIcon class="size-[18px]" /> View on GitHub
+        </a>
+      </div>
+      <p class="mt-4 text-xs text-muted">Tested on Windows Server 2019 / 2022 / 2025 and Windows 11</p>
+    </div>
+    <div class="container-page pb-20">
+      <div class="hero-shot relative mx-auto max-w-5xl">
+        <Image
+          src={vmDetails}
+          alt="Open vCenter showing a VM's details: state, configuration, network adapters and disks"
+          widths={[640, 1024, vmDetails.width]}
+          sizes="(min-width: 1024px) 1024px, 100vw"
+          loading="eager"
+          class="relative h-auto w-full"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="border-t border-line py-24">
+    <div class="container-page">
+      <div class="max-w-2xl">
+        <p class="eyebrow">Features</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Everything you reach for, every day</h2>
+        <p class="mt-4 text-muted">
+          The day-to-day of running Hyper-V in one console, with a nod to the classic desktop.
+        </p>
+      </div>
+      <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          features.map(({ icon: Icon, title, text }) => (
+            <div class="card group p-5 transition hover:border-white/20 hover:bg-surface">
+              <span class="grid size-10 place-items-center rounded-xl border border-brand/30 bg-brand/10 text-brand">
+                <Icon size={19} />
+              </span>
+              <h3 class="mt-4 font-medium">{title}</h3>
+              <p class="mt-1.5 text-sm leading-relaxed text-muted">{text}</p>
+            </div>
+          ))
+        }
+      </div>
+      <div class="mt-6 flex flex-wrap items-center gap-2 rounded-2xl border border-dashed border-line px-5 py-4">
+        <span class="mr-2 text-sm font-medium">On the roadmap</span>
+        {planned.map((item) => <span class="rounded-full border border-line px-3 py-1 text-xs text-muted">{item}</span>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Screenshots -->
+  <section id="screenshots" class="border-t border-line bg-surface/40 py-24">
+    <div class="container-page">
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div class="max-w-xl">
+          <p class="eyebrow">Tour</p>
+          <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">A console that feels like a desktop app</h2>
+        </div>
+        <div role="tablist" aria-label="Screenshots" class="on-window flex flex-wrap gap-1 rounded-xl border border-line bg-bg p-1">
+          {
+            screenshots.map((shot, i) => (
+              <button
+                role="tab"
+                aria-selected={i === 0 ? "true" : "false"}
+                data-shot={i}
+                class="rounded-lg px-3 py-1.5 text-sm text-muted transition-colors hover:text-fg aria-selected:bg-surface-2 aria-selected:text-fg"
+              >
+                {shot.title}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+      <div class="mt-10">
+        {
+          screenshots.map((shot, i) => (
+            <figure data-shot-panel={i} hidden={i !== 0} class="mx-auto max-w-5xl">
+              <Image
+                src={shot.image}
+                alt={shot.caption}
+                widths={[640, 1024, shot.image.width]}
+                sizes="(min-width: 1024px) 1024px, 100vw"
+                class="h-auto w-full drop-shadow-2xl"
+              />
+              <figcaption class="mt-4 text-center text-sm text-muted">{shot.caption}</figcaption>
+            </figure>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Stack explorer -->
+  <section id="stack" class="border-t border-line py-24">
+    <div class="container-page">
+      <div class="max-w-3xl">
+        <p class="eyebrow">Architecture</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">See the whole stack</h2>
+        <p class="mt-4 text-muted">
+          A web frontend, a backend API and worker, and a lightweight agent on every host - with RabbitMQ as the only
+          path between the backend and your hypervisors. Switch between the Docker Compose and Kubernetes installs,
+          click any component to see its real configuration, or follow a VM start from click to completion.
+        </p>
+      </div>
+    </div>
+    <div class="mx-auto mt-10 max-w-[1440px] px-4 sm:px-6 lg:px-8">
+      <StackExplorerIsland />
+    </div>
+  </section>
+
+  <!-- Install -->
+  <section id="install" class="border-t border-line bg-surface/40 py-24">
+    <div class="container-page">
+      <div class="max-w-2xl">
+        <p class="eyebrow">Quick install</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Up and running in three commands</h2>
+        <p class="mt-4 text-muted">
+          Published images, a Keycloak realm imported on first boot, test users for every role. Then add your
+          Hyper-V hosts - each one runs the ovc-agent service.
+        </p>
+      </div>
+      <div class="mt-12 grid gap-6 lg:grid-cols-2">
+        {
+          install.map(({ icon: Icon, title, text, code, href }) => (
+            <div class="card flex min-w-0 flex-col p-6">
+              <div class="flex items-center gap-3">
+                <span class="grid size-10 place-items-center rounded-xl border border-line bg-surface-2 text-brand">
+                  <Icon size={19} />
+                </span>
+                <h3 class="text-lg font-medium">{title}</h3>
+              </div>
+              <p class="mt-3 text-sm leading-relaxed text-muted">{text}</p>
+              <div class="code mt-5 overflow-x-auto rounded-xl border border-line">
+                <Code code={code} lang="sh" theme="github-dark-default" />
+              </div>
+              <a href={href} class="mt-5 text-sm text-brand hover:underline">
+                Read the full guide →
+              </a>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Repositories -->
+  <section class="border-t border-line py-24">
+    <div class="container-page">
+      <div class="max-w-2xl">
+        <p class="eyebrow">Open source</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Three components, three repositories</h2>
+      </div>
+      <div class="mt-12 grid gap-4 md:grid-cols-3">
+        {
+          repos.map((repo) => (
+            <a
+              href={repo.href}
+              target="_blank"
+              rel="noreferrer"
+              class="card group flex flex-col p-6 transition hover:border-brand/40 hover:bg-surface"
+            >
+              <div class="flex items-center gap-2 text-muted group-hover:text-fg">
+                <GitHubIcon class="size-4" />
+                <span class="font-mono text-sm font-semibold text-fg">{repo.name}</span>
+              </div>
+              <p class="mt-1 font-mono text-[11px] text-brand">{repo.stack}</p>
+              <p class="mt-4 text-sm leading-relaxed text-muted">{repo.text}</p>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="relative isolate overflow-hidden border-t border-line py-24">
+    <div aria-hidden="true" class="cta-glow absolute inset-0 -z-10"></div>
+    <div class="container-page text-center">
+      <Boxes size={36} className="mx-auto text-brand" />
+      <h2 class="mt-5 text-3xl font-semibold tracking-tight sm:text-5xl">Click around before you install</h2>
+      <p class="mx-auto mt-4 max-w-xl text-muted">
+        The live demo is the real console with a simulated backend in your browser - no login, nothing to install.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href={DEMO} target="_blank" rel="noreferrer" class="btn-primary">Open the live demo →</a>
+        <a href={GITHUB} target="_blank" rel="noreferrer" class="btn-ghost">
+          <GitHubIcon class="size-[18px]" /> Star on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const tabs = document.querySelectorAll<HTMLButtonElement>("[data-shot]");
+  const panels = document.querySelectorAll<HTMLElement>("[data-shot-panel]");
+  tabs.forEach((tab) =>
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => t.setAttribute("aria-selected", String(t === tab)));
+      panels.forEach((panel) => (panel.hidden = panel.dataset.shotPanel !== tab.dataset.shot));
+    }),
+  );
+</script>
+
+<style>
+  .hero-glow {
+    background:
+      radial-gradient(60% 50% at 50% 0%, rgb(16 132 208 / 0.28), transparent 70%),
+      radial-gradient(40% 35% at 50% 60%, rgb(0 176 240 / 0.12), transparent 70%);
+  }
+  .hero-grid {
+    background-image:
+      linear-gradient(rgb(148 163 184 / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(148 163 184 / 0.06) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(70% 60% at 50% 20%, black, transparent);
+  }
+  .hero-shot::before {
+    content: "";
+    position: absolute;
+    inset: 8% 6% 0;
+    background: radial-gradient(closest-side, rgb(0 176 240 / 0.35), transparent);
+    filter: blur(40px);
+  }
+  .cta-glow {
+    background: radial-gradient(50% 70% at 50% 100%, rgb(16 132 208 / 0.3), transparent 70%);
+  }
+</style>

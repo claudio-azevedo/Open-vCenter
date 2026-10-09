@@ -1,0 +1,80 @@
+/* Design tokens shared by the landing page (global.css) and the docs
+   (docs.css). Only usable from a file that also loads Tailwind. */
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+
+/* Brand: the logo's title-bar gradient (#000080 -> #1084D0) and its cyan
+   rule (#00B0F0), on a near-black navy. Dark only. */
+@theme {
+  --color-bg: #05070d;
+  --color-surface: #0a0f1c;
+  --color-surface-2: #121a2e;
+  --color-line: rgb(148 163 184 / 0.14);
+  --color-fg: #e8eef8;
+  --color-muted: #8a97ad;
+  --color-brand: #00b0f0;
+  --color-brand-2: #1084d0;
+  --color-navy: #000080;
+
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Modern skin: the defaults behind components.css. The retro skins in
+   site-themes.css override these per <html data-site-theme>. Literal values
+   only - a var() here would be resolved on :root, not where it is used. */
+:root {
+  --skin-page-bg: #05070d;
+  --skin-text-gradient: linear-gradient(90deg, #1084d0, #00b0f0 55%, #7dd3fc);
+
+  --skin-btn-radius: 0.5rem;
+  --skin-btn-primary-fg: #ffffff;
+  --skin-btn-primary-bg: linear-gradient(180deg, #1597e5, #1084d0);
+  --skin-btn-primary-border: 0;
+  --skin-btn-primary-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18), 0 0 0 1px rgb(0 176 240 / 0.4),
+    0 8px 24px -8px rgb(0 176 240 / 0.6);
+  --skin-btn-primary-text-shadow: none;
+  --skin-btn-primary-font-style: normal;
+
+  --skin-card-radius: 1rem;
+  --skin-card-shadow: none;
+  --skin-card-backdrop: none;
+
+  --skin-window-radius: 1rem;
+  --skin-window-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+  --skin-window-backdrop: none;
+  --skin-window-padding: 0;
+  --skin-titlebar-display: none;
+
+  --skin-bar-bg: rgb(5 7 13 / 0.75);
+  --skin-bar-shadow: none;
+  --skin-bar-backdrop: blur(24px);
+
+  --skin-code-bg: #05070d;
+
+  --flow-canvas: transparent;
+  --flow-canvas-shadow: none;
+  --flow-dot: #1e293b;
+  --flow-node-radius: 0.875rem;
+  --flow-node-border: 1px solid rgb(148 163 184 / 0.18);
+  --flow-node-bg: linear-gradient(180deg, #111a2e, #0c1324);
+  --flow-node-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.7);
+  --flow-icon-radius: 0.625rem;
+  --flow-edge-idle: #3b4a63;
+  --flow-edge-lit: #00b0f0;
+  --flow-edge-dim: #1a2233;
+  --flow-packet: #7dd3fc;
+  --flow-packet-filter: drop-shadow(0 0 6px #00b0f0);
+  --flow-label-radius: 999px;
+  --flow-label-border: 1px solid rgb(0 176 240 / 0.35);
+  --flow-label-bg: #071322;
+  --flow-label-fg: #bae6fd;
+  --flow-label-shadow: none;
+
+  --kind-external: #94a3b8;
+  --kind-edge: #34d399;
+  --kind-app: #00b0f0;
+  --kind-data: #a78bfa;
+  --kind-auth: #fbbf24;
+}

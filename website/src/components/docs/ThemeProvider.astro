@@ -1,0 +1,10 @@
+---
+// Starlight override: Starlight's light/dark follows the site skin (Modern is
+// dark, the retro skins are light) instead of a stored or OS preference.
+import { themeInitScript } from "../../lib/site-theme";
+---
+
+<script is:inline set:html={themeInitScript(true)} />
+<script is:inline>
+  window.StarlightThemeProvider = { updatePickers() {} };
+</script>

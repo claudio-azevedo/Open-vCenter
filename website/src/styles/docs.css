@@ -1,0 +1,188 @@
+/* Docs (Starlight) styles: Starlight's own CSS plus Tailwind utilities, the
+   site's tokens, components and skins, and Starlight's variables mapped onto
+   each skin. Tailwind's preflight is left out so it can't fight Starlight. */
+@layer base, starlight, theme, components, utilities;
+
+@import "@astrojs/starlight-tailwind";
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "./theme.css";
+@import "./components.css";
+@import "./site-themes.css";
+
+/* Unlayered, so it wins over starlight-tailwind's mapping. Modern is dark;
+   the retro skins below switch Starlight to light (ThemeProvider.astro). */
+:root {
+  --sl-font: var(--font-sans);
+  --sl-font-mono: var(--font-mono);
+
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #e8eef8;
+  --sl-color-gray-2: #c3cddd;
+  --sl-color-gray-3: #8a97ad;
+  --sl-color-gray-4: #4b5870;
+  --sl-color-gray-5: #1c263b;
+  --sl-color-gray-6: #0b111f;
+  --sl-color-black: #05070d;
+
+  /* Asides (:::note) and other "blue" accents use the brand cyan. */
+  --sl-color-blue-low: #06263b;
+  --sl-color-blue: #00b0f0;
+  --sl-color-blue-high: #bae6fd;
+
+  --sl-color-accent-low: #06263b;
+  --sl-color-accent: #1084d0;
+  --sl-color-accent-high: #7dd3fc;
+
+  --sl-color-bg-sidebar: #05070d;
+  --sl-color-hairline: rgb(148 163 184 / 0.14);
+  --sl-color-hairline-light: rgb(148 163 184 / 0.2);
+  --sl-color-hairline-shade: #05070d;
+
+  --sl-nav-height: 4rem;
+  color-scheme: dark;
+
+  --skin-sidebar-current-bg: rgb(16 132 208 / 0.16);
+  --skin-sidebar-current-fg: #ffffff;
+  --skin-sidebar-current-shadow: inset 2px 0 0 #00b0f0;
+}
+
+:root[data-site-theme="win9x"] {
+  --sl-color-white: #000000;
+  --sl-color-gray-1: #000000;
+  --sl-color-gray-2: #1a1a1a;
+  --sl-color-gray-3: #3a3a3a;
+  --sl-color-gray-4: #808080;
+  --sl-color-gray-5: #a0a0a0;
+  --sl-color-gray-6: #dfdfdf;
+  --sl-color-gray-7: #efefef;
+  --sl-color-black: #ffffff;
+  --sl-color-blue-low: #e0e4ff;
+  --sl-color-blue: #000080;
+  --sl-color-blue-high: #000080;
+  --sl-color-accent-low: #e0e4ff;
+  --sl-color-accent: #000080;
+  --sl-color-accent-high: #000080;
+  --sl-color-text-accent: #000080;
+  --sl-color-bg-sidebar: #c0c0c0;
+  --sl-color-bg-inline-code: #e8e8e8;
+  --sl-color-hairline: #808080;
+  --sl-color-hairline-light: #c0c0c0;
+  --sl-color-hairline-shade: #808080;
+  --skin-sidebar-current-bg: #000080;
+  --skin-sidebar-current-fg: #ffffff;
+  --skin-sidebar-current-shadow: none;
+}
+
+:root[data-site-theme="xp"] {
+  --sl-color-white: #000000;
+  --sl-color-gray-1: #000000;
+  --sl-color-gray-2: #222222;
+  --sl-color-gray-3: #4b4b4b;
+  --sl-color-gray-4: #8a877a;
+  --sl-color-gray-5: #c5c2b2;
+  --sl-color-gray-6: #ece9d8;
+  --sl-color-gray-7: #f5f4ee;
+  --sl-color-black: #ffffff;
+  --sl-color-blue-low: #e5efff;
+  --sl-color-blue: #316ac5;
+  --sl-color-blue-high: #0b3d91;
+  --sl-color-accent-low: #dbe7ff;
+  --sl-color-accent: #0054e3;
+  --sl-color-accent-high: #003c9e;
+  --sl-color-text-accent: #0046d5;
+  /* The XP task pane. */
+  --sl-color-bg-sidebar: #d6dff7;
+  --sl-color-bg-inline-code: #f1efe6;
+  --sl-color-hairline: #c5c2b2;
+  --sl-color-hairline-light: #ece9d8;
+  --sl-color-hairline-shade: #c5c2b2;
+  --skin-sidebar-current-bg: #316ac5;
+  --skin-sidebar-current-fg: #ffffff;
+  --skin-sidebar-current-shadow: none;
+}
+
+:root[data-site-theme="win7"] {
+  --sl-color-white: #000000;
+  --sl-color-gray-1: #111111;
+  --sl-color-gray-2: #1e1e1e;
+  --sl-color-gray-3: #505050;
+  --sl-color-gray-4: #8a8a8a;
+  --sl-color-gray-5: #c8c8c8;
+  --sl-color-gray-6: #eaeaea;
+  --sl-color-gray-7: #f4f4f4;
+  --sl-color-black: #ffffff;
+  --sl-color-blue-low: #e5f1fb;
+  --sl-color-blue: #3a78c9;
+  --sl-color-blue-high: #1e5aa8;
+  --sl-color-accent-low: #e5f1fb;
+  --sl-color-accent: #3a78c9;
+  --sl-color-accent-high: #1e5aa8;
+  --sl-color-text-accent: #1e5aa8;
+  --sl-color-bg-sidebar: #eef3fa;
+  --sl-color-bg-inline-code: #eef1f5;
+  --sl-color-hairline: #d5d5d5;
+  --sl-color-hairline-light: #e5e5e5;
+  --sl-color-hairline-shade: #d5d5d5;
+  --skin-sidebar-current-bg: linear-gradient(180deg, #f2f8fd, #dcecfc);
+  --skin-sidebar-current-fg: #1e1e1e;
+  --skin-sidebar-current-shadow: inset 0 0 0 1px #7da2ce;
+}
+
+/* The header is the skin's bar, like the landing page's. */
+header.header {
+  background: var(--skin-bar-bg);
+  border-color: var(--skin-bar-border-color, var(--sl-color-hairline-shade));
+  box-shadow: var(--skin-bar-shadow);
+  backdrop-filter: var(--skin-bar-backdrop);
+}
+
+.sidebar-content a[aria-current="page"] {
+  background: var(--skin-sidebar-current-bg);
+  color: var(--skin-sidebar-current-fg);
+  box-shadow: var(--skin-sidebar-current-shadow);
+}
+
+/* LinkButton: the skin's buttons. */
+.sl-link-button {
+  border-radius: var(--skin-btn-radius);
+}
+.sl-link-button.primary {
+  border-radius: var(--skin-btn-primary-radius, var(--skin-btn-radius));
+  border: var(--skin-btn-primary-border);
+  color: var(--skin-btn-primary-fg);
+  background: var(--skin-btn-primary-bg);
+  box-shadow: var(--skin-btn-primary-shadow);
+  text-shadow: var(--skin-btn-primary-text-shadow);
+  font-style: var(--skin-btn-primary-font-style);
+}
+.sl-link-button.secondary {
+  border: var(--skin-btn-border, 1px solid var(--sl-color-gray-4));
+  color: var(--skin-btn-fg, var(--sl-color-white));
+  background: var(--skin-btn-bg, transparent);
+  box-shadow: var(--skin-btn-shadow, none);
+}
+
+/* The docs skip Tailwind's preflight, so give the React islands and the
+   theme menu the bits of it they rely on. In the base layer, so the
+   component classes and utilities still win. */
+@layer base {
+  :is(.stack-explorer, .theme-picker) :where(button) {
+    background: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+  .stack-explorer :where(h3, p, dl, dd, ul, ol, figure) {
+    margin: 0;
+  }
+  .stack-explorer :where(ul, ol) {
+    list-style: none;
+    padding: 0;
+  }
+}
+
+.sl-markdown-content table {
+  font-size: var(--sl-text-sm);
+}

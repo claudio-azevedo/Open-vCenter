@@ -1,0 +1,335 @@
+/* Component classes shared by the landing page and the docs. Only usable
+   from a file that also loads Tailwind (they use @apply).
+
+   Everything themeable reads a --skin-* / --flow-* variable. theme.css holds
+   the Modern values; site-themes.css overrides them per
+   <html data-site-theme>. Variables that need to follow the local token
+   scope (desktop vs window, see site-themes.css) are read with a fallback
+   computed on the element itself, never pre-resolved on :root. */
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .eyebrow {
+    @apply font-mono text-xs font-medium tracking-wider text-brand uppercase;
+  }
+
+  /* Token scopes (see site-themes.css): text takes the scope's colour
+     instead of inheriting one resolved further up. */
+  .desktop,
+  .site-bar,
+  .card,
+  .window,
+  .on-window {
+    color: var(--color-fg);
+  }
+
+  .text-gradient {
+    /* A text-shadow would bleed through the clipped glyphs; use a filter. */
+    text-shadow: none;
+    filter: var(--skin-text-gradient-filter, none);
+    background: var(--skin-text-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .btn-primary,
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-4 py-2.5 font-medium transition;
+    border-radius: var(--skin-btn-radius);
+  }
+
+  .btn-primary {
+    border-radius: var(--skin-btn-primary-radius, var(--skin-btn-radius));
+    color: var(--skin-btn-primary-fg);
+    background: var(--skin-btn-primary-bg);
+    border: var(--skin-btn-primary-border);
+    box-shadow: var(--skin-btn-primary-shadow);
+    text-shadow: var(--skin-btn-primary-text-shadow);
+    font-style: var(--skin-btn-primary-font-style);
+  }
+  .btn-primary:hover {
+    filter: brightness(1.08);
+  }
+  .btn-primary:active {
+    box-shadow: var(--skin-btn-active-shadow, var(--skin-btn-primary-shadow));
+  }
+
+  .btn-ghost {
+    color: var(--skin-btn-fg, var(--color-fg));
+    background: var(--skin-btn-bg, rgb(255 255 255 / 0.03));
+    border: var(--skin-btn-border, 1px solid var(--color-line));
+    box-shadow: var(--skin-btn-shadow, none);
+  }
+  .btn-ghost:hover {
+    background: var(--skin-btn-hover-bg, rgb(255 255 255 / 0.06));
+    border-color: var(--skin-btn-hover-border-color, rgb(255 255 255 / 0.25));
+    box-shadow: var(--skin-btn-hover-shadow, var(--skin-btn-shadow, none));
+  }
+  .btn-ghost:active {
+    box-shadow: var(--skin-btn-active-shadow, var(--skin-btn-shadow, none));
+  }
+
+  .icon-btn {
+    @apply grid size-8 place-items-center transition disabled:pointer-events-none disabled:opacity-40;
+    color: var(--skin-btn-fg, var(--color-muted));
+    border-radius: var(--skin-btn-radius);
+    background: var(--skin-btn-bg, transparent);
+    border: var(--skin-btn-border, 1px solid var(--color-line));
+    box-shadow: var(--skin-btn-shadow, none);
+  }
+  .icon-btn:hover {
+    color: var(--skin-btn-fg, var(--color-fg));
+    border-color: var(--skin-btn-hover-border-color, rgb(255 255 255 / 0.25));
+  }
+
+  .card {
+    background: var(--skin-card-bg, color-mix(in oklab, var(--color-surface) 70%, transparent));
+    border: var(--skin-card-border, 1px solid var(--color-line));
+    border-radius: var(--skin-card-radius);
+    box-shadow: var(--skin-card-shadow);
+    backdrop-filter: var(--skin-card-backdrop);
+  }
+
+  /* A framed panel with an optional title bar (shown by the retro skins). */
+  .window {
+    overflow: hidden;
+    background: var(--skin-window-bg, color-mix(in oklab, var(--color-surface) 80%, transparent));
+    border: var(--skin-window-border, 1px solid var(--color-line));
+    border-radius: var(--skin-window-radius);
+    box-shadow: var(--skin-window-shadow);
+    backdrop-filter: var(--skin-window-backdrop);
+    padding: var(--skin-window-padding);
+  }
+  .window-titlebar {
+    display: var(--skin-titlebar-display);
+    align-items: center;
+    gap: 0.5rem;
+    height: var(--skin-titlebar-height);
+    padding: var(--skin-titlebar-padding);
+    background: var(--skin-titlebar-bg);
+    color: var(--skin-titlebar-fg);
+    text-shadow: var(--skin-titlebar-text-shadow);
+    font: var(--skin-titlebar-font);
+    border-radius: var(--skin-titlebar-radius);
+  }
+  .window-titlebar-buttons {
+    display: flex;
+    gap: 2px;
+    margin-left: auto;
+  }
+  .window-titlebar-buttons > span {
+    width: var(--skin-titlebar-btn-width);
+    height: var(--skin-titlebar-btn-height);
+    background: var(--skin-titlebar-btn-bg);
+    box-shadow: var(--skin-titlebar-btn-shadow);
+    border: var(--skin-titlebar-btn-border);
+    border-radius: var(--skin-titlebar-btn-radius);
+  }
+  .window-titlebar-buttons > span:last-child {
+    background: var(--skin-titlebar-close-bg, var(--skin-titlebar-btn-bg));
+  }
+  .window-body {
+    background: var(--skin-window-body-bg);
+    box-shadow: var(--skin-window-body-shadow);
+    border-radius: var(--skin-window-body-radius);
+  }
+
+  /* Header and footer bars. */
+  .site-bar {
+    background: var(--skin-bar-bg);
+    border-color: var(--skin-bar-border-color, var(--color-line));
+    box-shadow: var(--skin-bar-shadow);
+    backdrop-filter: var(--skin-bar-backdrop);
+  }
+
+  /* Code blocks stay dark in every skin, like a terminal. */
+  .code {
+    background: var(--skin-code-bg);
+    color: #e6edf3;
+  }
+  .code pre {
+    @apply m-0 p-3 font-mono text-[12px] leading-relaxed;
+    background: transparent !important;
+  }
+}
+
+/* --- Stack explorer (React Flow) ----------------------------------------- */
+
+.react-flow {
+  --xy-background-color: var(--flow-canvas);
+  --xy-controls-button-background-color: var(--color-surface-2);
+  --xy-controls-button-background-color-hover: var(--color-surface);
+  --xy-controls-button-color: var(--color-muted);
+  --xy-controls-button-color-hover: var(--color-fg);
+  --xy-controls-button-border-color: var(--color-line);
+  --xy-attribution-background-color: transparent;
+  box-shadow: var(--flow-canvas-shadow);
+}
+
+.react-flow__handle {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stack-node {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 220px;
+  padding: 0.75rem;
+  border-radius: var(--flow-node-radius);
+  border: var(--flow-node-border);
+  background: var(--flow-node-bg);
+  box-shadow: var(--flow-node-shadow);
+  transition:
+    opacity 200ms,
+    border-color 200ms,
+    box-shadow 200ms;
+  cursor: pointer;
+}
+.stack-node:hover {
+  border-color: color-mix(in srgb, var(--kind) 60%, transparent);
+}
+.stack-node[data-emphasis="focus"],
+.stack-node[data-emphasis="related"] {
+  border-color: var(--flow-node-lit-border, color-mix(in srgb, var(--kind) 70%, transparent));
+  box-shadow: var(
+    --flow-node-related-shadow,
+    0 0 0 1px color-mix(in srgb, var(--kind) 35%, transparent),
+    0 0 32px -6px color-mix(in srgb, var(--kind) 55%, transparent)
+  );
+}
+.stack-node[data-emphasis="focus"] {
+  background: var(--flow-node-focus-bg, var(--flow-node-bg));
+  box-shadow: var(
+    --flow-node-focus-shadow,
+    0 0 0 2px var(--kind),
+    0 0 40px -4px color-mix(in srgb, var(--kind) 70%, transparent)
+  );
+}
+.stack-node[data-emphasis="dim"] {
+  opacity: 0.32;
+}
+
+.stack-node-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--flow-icon-radius);
+  color: var(--kind);
+  background: color-mix(in srgb, var(--kind) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--kind) 30%, transparent);
+}
+
+/* The arrowheads read the same variables (EDGE_COLOR in StackExplorer.tsx). */
+.flow-edge {
+  stroke: var(--flow-edge-idle) !important;
+  stroke-width: 1.5;
+  transition:
+    stroke 200ms,
+    opacity 200ms;
+}
+.flow-edge[data-emphasis="focus"],
+.flow-edge[data-emphasis="related"] {
+  stroke: var(--flow-edge-lit) !important;
+  stroke-width: 2;
+}
+.flow-edge[data-emphasis="dim"] {
+  stroke: var(--flow-edge-dim) !important;
+}
+
+.flow-packet {
+  fill: var(--flow-packet);
+  filter: var(--flow-packet-filter);
+}
+
+/* Labels sit above the nodes so a short gap between columns can't hide them. */
+.react-flow__edgelabel-renderer {
+  z-index: 10;
+}
+
+.flow-edge-label {
+  position: absolute;
+  padding: 2px 8px;
+  border-radius: var(--flow-label-radius);
+  border: var(--flow-label-border);
+  background: var(--flow-label-bg);
+  color: var(--flow-label-fg);
+  box-shadow: var(--flow-label-shadow);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .flow-packet {
+    display: none;
+  }
+}
+
+/* --- Theme menu (ThemePicker.astro) -------------------------------------- */
+
+.theme-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  z-index: 60;
+  display: grid;
+  min-width: 13rem;
+  padding: 0.375rem;
+  color: var(--color-fg);
+  background: var(--skin-menu-bg, var(--color-surface));
+  border: var(--skin-card-border, 1px solid var(--color-line));
+  border-radius: var(--skin-card-radius);
+  box-shadow: var(--skin-menu-shadow, 0 20px 40px -12px rgb(0 0 0 / 0.6));
+}
+.theme-menu[hidden] {
+  display: none;
+}
+.theme-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  border: 0;
+  border-radius: calc(var(--skin-card-radius) / 2);
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+}
+.theme-menu-item:hover,
+.theme-menu-item:focus-visible {
+  outline: none;
+  background: var(--skin-menu-hover-bg, var(--color-surface-2));
+  color: var(--skin-menu-hover-fg, inherit);
+}
+.theme-menu-swatch {
+  width: 1.75rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.25);
+}
+.theme-menu-check {
+  width: 1rem;
+  height: 1rem;
+  margin-left: auto;
+  visibility: hidden;
+}
+.theme-menu-item[aria-checked="true"] .theme-menu-check {
+  visibility: visible;
+}

@@ -1,0 +1,72 @@
+---
+title: Overview
+description: "Open vCenter is a web console for managing Microsoft Hyper-V clusters, hosts and virtual machines."
+---
+
+import { LinkButton } from "@astrojs/starlight/components";
+
+Open vCenter (OVC) is a web console for managing VMs. It currently supports
+**Microsoft Hyper-V** clusters, hosts and virtual machines - browse your
+inventory, run VM lifecycle and power actions, edit hardware, manage templates
+and ISOs, and open a VM console straight from the browser.
+
+<div class="not-content flex flex-wrap gap-3">
+  <LinkButton href="/docs/docker-compose/" icon="right-arrow">Install with Docker Compose</LinkButton>
+  <LinkButton href="https://demo.openvcenter.com/" variant="secondary" icon="external">Live demo</LinkButton>
+</div>
+
+## What it is
+
+OVC is a distributed system with three first-party components:
+
+| Component        | Role                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------- |
+| **ovc-frontend** | React 19 / TanStack Start SSR web UI. The only REST client.                           |
+| **ovc-backend**  | FastAPI REST API **+** a RabbitMQ worker. Owns PostgreSQL and Valkey.                 |
+| **ovc-agent**    | A Go Windows service on every Hyper-V host. Executes the work, replies over RabbitMQ. |
+
+The backend and the agents **never talk directly** - every operation flows
+through RabbitMQ as an `AgentRequest` / `AgentResponse` pair, and every mutating
+operation is tracked as an asynchronous `Task`.
+
+```text
+Browser ──REST──▶ ovc-frontend ──REST /api/*──▶ ovc-backend ──RabbitMQ──▶ ovc-agent (per host)
+                                                     │
+                                            PostgreSQL + Valkey
+```
+
+Tested on Windows 11, Windows Server 2022 and Windows Server 2025; should also
+work on 2019 and 2016.
+
+## Where to go next
+
+- **[Docker Compose](/docs/docker-compose/)** - the whole stack as containers, one compose file.
+- **[Kubernetes](/docs/kubernetes/)** - the whole stack as plain manifests.
+- **[Running in dev mode](/docs/running/)** - local development stack and per-host agent setup.
+- **[Architecture](/docs/architecture/)** - how a request flows end to end, queues, task lifecycle.
+- **[Components](/docs/components/)** - each repository, its stack and responsibilities.
+- **[Dependencies](/docs/dependencies/)** - PostgreSQL, RabbitMQ, Valkey, OIDC, guacd.
+
+## License
+
+Licensed under the **Apache License 2.0**.
+
+## Disclaimer
+
+Open vCenter is an independent, community-driven open source project. It is
+not affiliated with, endorsed by, sponsored by or supported by Microsoft,
+VMware, Broadcom or any other vendor whose products it works with or is
+compared to.
+
+Microsoft, Windows, Windows Server and Hyper-V are trademarks of the Microsoft
+group of companies. VMware, ESXi, vSphere, vCenter and vMotion are trademarks
+of Broadcom Inc. and/or its subsidiaries. All other trademarks belong to their
+respective owners.
+
+The "vCenter" in the project's name refers to
+the general idea of a virtualization management center, not to VMware's
+product.
+
+The software is provided "as is", without warranty of any kind - see
+[`LICENSE`](https://github.com/claudio-azevedo/Open-vCenter/blob/main/LICENSE). Use it at your own risk, and try it on machines you can
+afford to lose before trusting it with the ones you cannot.

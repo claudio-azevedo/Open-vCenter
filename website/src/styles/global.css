@@ -1,0 +1,22 @@
+/* Landing page styles. The docs load docs.css instead. */
+@import "tailwindcss";
+@import "./theme.css";
+@import "./components.css";
+@import "./site-themes.css";
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--skin-page-bg);
+  background-attachment: fixed;
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

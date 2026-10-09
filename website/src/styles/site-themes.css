@@ -1,0 +1,502 @@
+/* Retro skins, picked with the theme menu (<html data-site-theme>). Modern
+   is the default and lives in theme.css. The palettes follow ovc-frontend's
+   own themes (src/styles/themes/), which port XP.css and 7.css (both MIT).
+
+   Each skin has two token scopes:
+   - window: the root, the header, and anything framed (.card, .window,
+     .on-window) - light surfaces with dark text;
+   - desktop: .desktop (the landing page's <main>), i.e. text sitting
+     directly on the wallpaper - light text, translucent surfaces.
+   Tailwind utilities read the tokens where they are used, so redefining them
+   on an element re-themes its whole subtree. */
+
+/* ===== Windows Classic ===================================================  */
+
+:root[data-site-theme="win9x"],
+:root[data-site-theme="win9x"] :is(.card, .window, .on-window) {
+  --color-bg: #ffffff;
+  --color-surface: #c0c0c0;
+  --color-surface-2: #dfdfdf;
+  --color-line: #808080;
+  --color-fg: #000000;
+  --color-muted: #3a3a3a;
+  --color-brand: #000080;
+  --color-brand-2: #1084d0;
+  --skin-text-gradient: linear-gradient(#000080, #000080);
+}
+
+:root[data-site-theme="win9x"] .desktop {
+  --color-bg: #006a6a;
+  --color-surface: rgb(0 0 0 / 0.12);
+  --color-line: rgb(255 255 255 / 0.35);
+  --color-fg: #ffffff;
+  --color-muted: #d8f0f0;
+  --color-brand: #ffff80;
+  --skin-text-gradient: linear-gradient(#ffff80, #ffff80);
+}
+
+:root[data-site-theme="win9x"] {
+  color-scheme: light;
+  /* Tailwind's rounded-* scale: square corners. */
+  --radius-xs: 0;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-2xl: 0;
+  --radius-3xl: 0;
+  --skin-menu-bg: #c0c0c0;
+  --skin-menu-shadow:
+    inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #ffffff;
+  --skin-menu-hover-bg: #000080;
+  --skin-menu-hover-fg: #ffffff;
+  --font-sans: "Microsoft Sans Serif", "MS Sans Serif", Tahoma, Geneva, Verdana, Arial, sans-serif;
+
+  --skin-page-bg: #008080;
+
+  --skin-btn-radius: 0;
+  --skin-btn-fg: #000000;
+  --skin-btn-bg: #c0c0c0;
+  --skin-btn-border: 0;
+  --skin-btn-shadow:
+    inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+  --skin-btn-hover-bg: #c0c0c0;
+  --skin-btn-hover-border-color: transparent;
+  --skin-btn-active-shadow:
+    inset -1px -1px #ffffff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080;
+  --skin-btn-primary-fg: #000000;
+  --skin-btn-primary-bg: #c0c0c0;
+  --skin-btn-primary-border: 0;
+  --skin-btn-primary-shadow:
+    0 0 0 1px #0a0a0a, inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080,
+    inset 2px 2px #dfdfdf;
+
+  --skin-card-bg: #c0c0c0;
+  --skin-card-border: 0;
+  --skin-card-radius: 0;
+  --skin-card-shadow:
+    inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #ffffff;
+
+  --skin-window-bg: #c0c0c0;
+  --skin-window-border: 0;
+  --skin-window-radius: 0;
+  --skin-window-shadow:
+    inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #ffffff;
+  --skin-window-padding: 3px;
+  --skin-titlebar-display: flex;
+  --skin-titlebar-height: 22px;
+  --skin-titlebar-padding: 0 3px 0 6px;
+  --skin-titlebar-bg: linear-gradient(90deg, #000080, #1084d0);
+  --skin-titlebar-fg: #ffffff;
+  --skin-titlebar-text-shadow: none;
+  --skin-titlebar-font: 700 13px "Microsoft Sans Serif", Tahoma, sans-serif;
+  --skin-titlebar-radius: 0;
+  --skin-titlebar-btn-width: 16px;
+  --skin-titlebar-btn-height: 14px;
+  --skin-titlebar-btn-bg: #c0c0c0;
+  --skin-titlebar-btn-shadow:
+    inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+  --skin-titlebar-btn-border: 0;
+  --skin-titlebar-btn-radius: 0;
+  --skin-window-body-bg: #c0c0c0;
+  --skin-window-body-shadow: none;
+  --skin-window-body-radius: 0;
+
+  --skin-bar-bg: #c0c0c0;
+  --skin-bar-border-color: #808080;
+  --skin-bar-shadow: inset 0 1px #ffffff, inset 0 -1px #dfdfdf;
+  --skin-bar-backdrop: none;
+
+  --skin-code-bg: #000000;
+
+  --flow-canvas: #ffffff;
+  --flow-canvas-shadow:
+    inset 1px 1px #808080, inset -1px -1px #ffffff, inset 2px 2px #0a0a0a, inset -2px -2px #dfdfdf;
+  --flow-dot: #c0c0c0;
+  --flow-node-radius: 0;
+  --flow-node-border: 1px solid #c0c0c0;
+  --flow-node-bg: #c0c0c0;
+  --flow-node-shadow:
+    inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+  --flow-node-lit-border: #c0c0c0;
+  --flow-node-related-shadow:
+    inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf,
+    0 0 0 2px #000080;
+  --flow-node-focus-bg: #000080;
+  --flow-node-focus-shadow: 0 0 0 1px #0a0a0a;
+  --flow-icon-radius: 0;
+  --flow-edge-idle: #808080;
+  --flow-edge-lit: #000080;
+  --flow-edge-dim: #dfdfdf;
+  --flow-packet: #000080;
+  --flow-packet-filter: none;
+  --flow-label-radius: 0;
+  --flow-label-border: 1px solid #000000;
+  --flow-label-bg: #ffffe1;
+  --flow-label-fg: #000000;
+  --flow-label-shadow: none;
+
+  --kind-external: #404040;
+  --kind-edge: #008000;
+  --kind-app: #000080;
+  --kind-data: #800080;
+  --kind-auth: #806000;
+}
+
+/* A selected node reads like a selected item: navy with white text. */
+:root[data-site-theme="win9x"] .stack-node[data-emphasis="focus"] {
+  --color-fg: #ffffff;
+  --color-muted: #dfdfdf;
+}
+:root[data-site-theme="win9x"] .stack-node[data-emphasis="focus"] .stack-node-icon {
+  color: #ffffff;
+  border-color: rgb(255 255 255 / 0.5);
+}
+
+/* ===== Windows XP ======================================================== */
+
+:root[data-site-theme="xp"],
+:root[data-site-theme="xp"] :is(.card, .window, .on-window) {
+  --skin-text-gradient-filter: none;
+  --color-bg: #ffffff;
+  --color-surface: #ece9d8;
+  --color-surface-2: #ffffff;
+  --color-line: #aca899;
+  --color-fg: #000000;
+  --color-muted: #4b4b4b;
+  --color-brand: #0054e3;
+  --color-brand-2: #3d95ff;
+  --skin-text-gradient: linear-gradient(90deg, #0054e3, #3d95ff);
+  text-shadow: none;
+}
+
+:root[data-site-theme="xp"] .desktop {
+  --skin-text-gradient-filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.45));
+  --color-bg: rgb(0 0 0 / 0.15);
+  --color-surface: rgb(255 255 255 / 0.1);
+  --color-line: rgb(255 255 255 / 0.4);
+  --color-fg: #ffffff;
+  --color-muted: #eef4ff;
+  --color-brand: #fff7b0;
+  --skin-text-gradient: linear-gradient(90deg, #fff7b0, #ffffff);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.45);
+}
+
+:root[data-site-theme="xp"] :is(.site-bar, header.header) {
+  --skin-text-gradient-filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.45));
+  --color-fg: #ffffff;
+  --color-muted: #e3ecff;
+  --color-line: rgb(255 255 255 / 0.35);
+  --skin-text-gradient: linear-gradient(#ffffff, #ffffff);
+  text-shadow: 1px 1px rgb(0 0 0 / 0.35);
+}
+
+:root[data-site-theme="xp"] :is(h1, h2) {
+  font-family: "Trebuchet MS", Tahoma, sans-serif;
+}
+
+:root[data-site-theme="xp"] {
+  color-scheme: light;
+  /* Tailwind's rounded-* scale: barely rounded, like Luna controls. */
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 3px;
+  --radius-xl: 4px;
+  --radius-2xl: 6px;
+  --radius-3xl: 8px;
+  --skin-menu-bg: #ffffff;
+  --skin-menu-shadow: 2px 2px 4px rgb(0 0 0 / 0.4);
+  --skin-menu-hover-bg: #316ac5;
+  --skin-menu-hover-fg: #ffffff;
+  --font-sans: Tahoma, Verdana, "Segoe UI", sans-serif;
+
+  /* Bliss-ish: blue sky over a green hill. */
+  --skin-page-bg:
+    radial-gradient(ellipse 140% 50% at 30% 108%, #6cae43 0 55%, transparent 56%),
+    linear-gradient(#245edb, #4f8ae6 60%, #86aff0);
+
+  --skin-btn-radius: 3px;
+  --skin-btn-fg: #000000;
+  --skin-btn-bg: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4);
+  --skin-btn-border: 1px solid #003c74;
+  --skin-btn-shadow: none;
+  --skin-btn-hover-bg: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4);
+  --skin-btn-hover-border-color: #003c74;
+  --skin-btn-hover-shadow:
+    inset -1px 1px #fff0cf, inset 1px 2px #fdd889, inset -2px 2px #fbc761, inset 2px -2px #e5a01a;
+  --skin-btn-active-shadow: inset 1px 1px 2px rgb(0 0 0 / 0.25);
+  /* The green Start button. */
+  --skin-btn-primary-radius: 4px 14px 14px 4px;
+  --skin-btn-primary-fg: #ffffff;
+  --skin-btn-primary-bg: linear-gradient(180deg, #5eac56 0%, #3c9a3c 10%, #379437 45%, #2f8a2f 88%, #2a7a2a);
+  --skin-btn-primary-border: 1px solid #1b5e1b;
+  --skin-btn-primary-shadow: inset 0 1px rgb(255 255 255 / 0.45), 1px 2px 4px rgb(0 0 0 / 0.35);
+  --skin-btn-primary-text-shadow: 1px 1px rgb(0 0 0 / 0.45);
+  --skin-btn-primary-font-style: italic;
+
+  --skin-card-bg: linear-gradient(180deg, #ffffff, #f4f2ea);
+  --skin-card-border: 1px solid #7f9db9;
+  --skin-card-radius: 6px;
+  --skin-card-shadow: 1px 2px 8px rgb(0 0 0 / 0.25);
+
+  --skin-window-bg: #0831d9;
+  --skin-window-border: 0;
+  --skin-window-radius: 8px 8px 0 0;
+  --skin-window-shadow:
+    inset -1px -1px #00138c, inset 1px 1px #0831d9, inset -2px -2px #001ea0, inset 2px 2px #166aee,
+    inset -3px -3px #003bda, inset 3px 3px #0855dd, 2px 3px 10px rgb(0 0 0 / 0.35);
+  --skin-window-padding: 0 3px 3px;
+  --skin-titlebar-display: flex;
+  --skin-titlebar-height: 28px;
+  --skin-titlebar-padding: 3px 5px 3px 8px;
+  --skin-titlebar-bg: linear-gradient(
+    180deg,
+    #0997ff,
+    #0053ee 8%,
+    #0050ee 40%,
+    #06f 88%,
+    #06f 93%,
+    #005bff 95%,
+    #003dd7 96%,
+    #003dd7
+  );
+  --skin-titlebar-fg: #ffffff;
+  --skin-titlebar-text-shadow: 1px 1px #0f1089;
+  --skin-titlebar-font: 700 13px "Trebuchet MS", Tahoma, sans-serif;
+  --skin-titlebar-radius: 7px 7px 0 0;
+  --skin-titlebar-btn-width: 21px;
+  --skin-titlebar-btn-height: 21px;
+  --skin-titlebar-btn-bg: linear-gradient(135deg, #5a96f6, #1d5bd8);
+  --skin-titlebar-close-bg: linear-gradient(135deg, #e48a6e, #c43c1c);
+  --skin-titlebar-btn-shadow: inset 0 0 2px rgb(255 255 255 / 0.6);
+  --skin-titlebar-btn-border: 1px solid #ffffff;
+  --skin-titlebar-btn-radius: 3px;
+  --skin-window-body-bg: #ece9d8;
+  --skin-window-body-shadow: none;
+  --skin-window-body-radius: 0;
+
+  /* The Luna taskbar. */
+  --skin-bar-bg: linear-gradient(
+    180deg,
+    #1f2f86 0,
+    #3165c4 3%,
+    #3682e5 6%,
+    #4490e6 10%,
+    #3883e5 12%,
+    #2b71e0 15%,
+    #2663da 18%,
+    #235bd6 20%,
+    #2258d5 23%,
+    #2157d6 38%,
+    #245ddb 54%,
+    #2562df 86%,
+    #245fdc 89%,
+    #2158d4 92%,
+    #1d4ec0 95%,
+    #1941a5 98%
+  );
+  --skin-bar-border-color: #0c2a94;
+  --skin-bar-shadow: none;
+  --skin-bar-backdrop: none;
+
+  --skin-code-bg: #0d1117;
+
+  --flow-canvas: #ffffff;
+  --flow-canvas-shadow: inset 0 0 0 1px #7f9db9;
+  --flow-dot: #d6d3c4;
+  --flow-node-radius: 3px;
+  --flow-node-border: 1px solid #003c74;
+  --flow-node-bg: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4);
+  --flow-node-shadow: none;
+  --flow-node-lit-border: #003c74;
+  --flow-node-related-shadow:
+    inset -1px 1px #fff0cf, inset 1px 2px #fdd889, inset -2px 2px #fbc761, inset 2px -2px #e5a01a;
+  --flow-node-focus-bg: #316ac5;
+  --flow-node-focus-shadow: 0 0 0 1px #003c74;
+  --flow-icon-radius: 3px;
+  --flow-edge-idle: #9a9a9a;
+  --flow-edge-lit: #0054e3;
+  --flow-edge-dim: #e3e1d6;
+  --flow-packet: #3d95ff;
+  --flow-packet-filter: none;
+  --flow-label-radius: 0;
+  --flow-label-border: 1px solid #000000;
+  --flow-label-bg: #ffffe1;
+  --flow-label-fg: #000000;
+  --flow-label-shadow: 2px 2px 3px rgb(0 0 0 / 0.25);
+
+  --kind-external: #5a5a5a;
+  --kind-edge: #1d8a1d;
+  --kind-app: #0046d5;
+  --kind-data: #7a3db8;
+  --kind-auth: #a66d00;
+}
+
+:root[data-site-theme="xp"] .stack-node[data-emphasis="focus"] {
+  --color-fg: #ffffff;
+  --color-muted: #e3ecff;
+}
+:root[data-site-theme="xp"] .stack-node[data-emphasis="focus"] .stack-node-icon {
+  color: #ffffff;
+  border-color: rgb(255 255 255 / 0.5);
+}
+
+/* ===== Windows 7 ========================================================= */
+
+:root[data-site-theme="win7"],
+:root[data-site-theme="win7"] :is(.card, .window, .on-window) {
+  --skin-text-gradient-filter: none;
+  --color-bg: #ffffff;
+  --color-surface: #f0f0f0;
+  --color-surface-2: #dcecfc;
+  --color-line: #abadb3;
+  --color-fg: #1e1e1e;
+  --color-muted: #505050;
+  --color-brand: #1e5aa8;
+  --color-brand-2: #3a78c9;
+  --skin-text-gradient: linear-gradient(90deg, #1e5aa8, #3a9ad9);
+  text-shadow: none;
+}
+
+:root[data-site-theme="win7"] .desktop {
+  --skin-text-gradient-filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.45));
+  --color-bg: rgb(0 0 0 / 0.2);
+  --color-surface: rgb(255 255 255 / 0.06);
+  --color-line: rgb(255 255 255 / 0.25);
+  --color-fg: #ffffff;
+  --color-muted: #dce9f7;
+  --color-brand: #9fd4ff;
+  --skin-text-gradient: linear-gradient(90deg, #bfe6ff, #ffffff);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.45);
+}
+
+:root[data-site-theme="win7"] :is(.site-bar, header.header) {
+  --skin-text-gradient-filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.45));
+  --color-fg: #ffffff;
+  --color-muted: #d6e4f5;
+  --color-line: rgb(255 255 255 / 0.3);
+  --skin-text-gradient: linear-gradient(90deg, #bfe6ff, #ffffff);
+}
+
+:root[data-site-theme="win7"] {
+  color-scheme: light;
+  /* Tailwind's rounded-* scale: barely rounded, like Aero controls. */
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 3px;
+  --radius-xl: 4px;
+  --radius-2xl: 7px;
+  --radius-3xl: 8px;
+  --skin-menu-bg: #f0f0f0;
+  --skin-menu-shadow: 2px 2px 6px rgb(0 0 0 / 0.35);
+  --skin-menu-hover-bg: linear-gradient(180deg, #f2f8fd, #dcecfc);
+  --font-sans: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+
+  /* "Harmony"-style wallpaper behind the glass. */
+  --skin-page-bg:
+    radial-gradient(ellipse 60% 45% at 28% 38%, rgb(120 210 255 / 0.55), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 75% 70%, rgb(64 160 90 / 0.45), transparent 70%),
+    radial-gradient(ellipse 40% 35% at 60% 25%, rgb(255 170 60 / 0.35), transparent 70%),
+    linear-gradient(135deg, #0c3b7c, #1a6fbf 50%, #0a2f66);
+
+  --skin-btn-radius: 3px;
+  --skin-btn-fg: #000000;
+  --skin-btn-bg: linear-gradient(180deg, #f2f2f2 45%, #ebebeb 45%, #cfcfcf);
+  --skin-btn-border: 1px solid #707070;
+  --skin-btn-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.8);
+  --skin-btn-hover-bg: linear-gradient(180deg, #eaf6fd 45%, #bee6fd 45%, #a7d9f5);
+  --skin-btn-hover-border-color: #3c7fb1;
+  --skin-btn-active-shadow: inset 0 1px 3px rgb(0 0 0 / 0.3);
+  --skin-btn-primary-fg: #ffffff;
+  --skin-btn-primary-bg: linear-gradient(180deg, #6fb0ee 0%, #3f8ae0 45%, #2468c7 46%, #3a86dc 100%);
+  --skin-btn-primary-border: 1px solid #1c4a8a;
+  --skin-btn-primary-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.35), 0 2px 6px rgb(0 0 0 / 0.3);
+  --skin-btn-primary-text-shadow: 0 1px 1px rgb(0 0 0 / 0.4);
+
+  --skin-card-bg: linear-gradient(180deg, rgb(255 255 255 / 0.94), rgb(238 245 252 / 0.9));
+  --skin-card-border: 1px solid rgb(0 0 0 / 0.45);
+  --skin-card-radius: 7px;
+  --skin-card-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.6), 2px 4px 16px rgb(0 0 0 / 0.35);
+  --skin-card-backdrop: blur(10px);
+
+  --skin-window-bg: linear-gradient(180deg, rgb(185 209 234 / 0.78), rgb(150 182 220 / 0.68));
+  --skin-window-border: 1px solid rgb(0 0 0 / 0.65);
+  --skin-window-radius: 7px;
+  --skin-window-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.65), 2px 4px 16px rgb(0 0 0 / 0.55);
+  --skin-window-backdrop: blur(10px) saturate(1.4);
+  --skin-window-padding: 0 7px 7px;
+  --skin-titlebar-display: flex;
+  --skin-titlebar-height: 30px;
+  --skin-titlebar-padding: 0 0 2px 4px;
+  --skin-titlebar-bg: transparent;
+  --skin-titlebar-fg: #000000;
+  --skin-titlebar-text-shadow: 0 0 10px #ffffff, 0 0 6px #ffffff, 0 0 3px #ffffff;
+  --skin-titlebar-font: 400 12px "Segoe UI", -apple-system, sans-serif;
+  --skin-titlebar-radius: 0;
+  --skin-titlebar-btn-width: 27px;
+  --skin-titlebar-btn-height: 19px;
+  --skin-titlebar-btn-bg: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.55),
+    rgb(255 255 255 / 0.3) 45%,
+    rgb(0 0 0 / 0.08) 50%,
+    rgb(255 255 255 / 0.2) 75%,
+    rgb(255 255 255 / 0.5)
+  );
+  --skin-titlebar-close-bg: linear-gradient(180deg, #e8a093, #d0705e 45%, #c0412c 50%, #d1704f 75%, #e9a593);
+  --skin-titlebar-btn-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.5);
+  --skin-titlebar-btn-border: 1px solid rgb(0 0 0 / 0.5);
+  --skin-titlebar-btn-radius: 3px;
+  --skin-window-body-bg: #ffffff;
+  --skin-window-body-shadow: 0 0 0 1px rgb(0 0 0 / 0.45), 0 0 0 2px rgb(255 255 255 / 0.5);
+  --skin-window-body-radius: 1px;
+
+  /* The glass taskbar. */
+  --skin-bar-bg: rgb(18 40 72 / 0.62);
+  --skin-bar-border-color: rgb(255 255 255 / 0.25);
+  --skin-bar-shadow: inset 0 1px rgb(255 255 255 / 0.15);
+  --skin-bar-backdrop: blur(14px) saturate(1.4);
+
+  --skin-code-bg: #0d1117;
+
+  --flow-canvas: #ffffff;
+  --flow-canvas-shadow: none;
+  --flow-dot: #d9d9d9;
+  --flow-node-radius: 3px;
+  --flow-node-border: 1px solid #707070;
+  --flow-node-bg: linear-gradient(180deg, #f2f2f2 45%, #ebebeb 45%, #cfcfcf);
+  --flow-node-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.8);
+  --flow-node-lit-border: #3c7fb1;
+  --flow-node-related-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.8), 0 0 0 1px #3c7fb1;
+  --flow-node-focus-bg: linear-gradient(180deg, #e5f4fc 45%, #c4e5f6 45%, #98d1ef);
+  --flow-node-focus-shadow: 0 0 0 1px #3c7fb1, 0 0 8px rgb(60 127 177 / 0.6);
+  --flow-icon-radius: 3px;
+  --flow-edge-idle: #9a9a9a;
+  --flow-edge-lit: #3a78c9;
+  --flow-edge-dim: #e3e3e3;
+  --flow-packet: #3a9ad9;
+  --flow-packet-filter: drop-shadow(0 0 4px #7cc4ff);
+  --flow-label-radius: 3px;
+  --flow-label-border: 1px solid #767676;
+  --flow-label-bg: linear-gradient(180deg, #ffffff, #e4e5f0);
+  --flow-label-fg: #1e1e1e;
+  --flow-label-shadow: 2px 2px 3px rgb(0 0 0 / 0.2);
+
+  --kind-external: #555555;
+  --kind-edge: #268a26;
+  --kind-app: #1e5aa8;
+  --kind-data: #7b4fb5;
+  --kind-auth: #a5730a;
+}
+
+/* ===== All retro skins =================================================== */
+
+:root:is([data-site-theme="win9x"], [data-site-theme="xp"], [data-site-theme="win7"]) {
+  /* Modern's neon glows don't belong on a wallpaper. */
+  & :is(.hero-glow, .hero-grid, .cta-glow) {
+    display: none;
+  }
+  & .hero-shot::before {
+    display: none;
+  }
+}

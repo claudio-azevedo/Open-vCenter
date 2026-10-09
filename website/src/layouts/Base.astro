@@ -1,0 +1,102 @@
+---
+import "../styles/global.css";
+import LogoMark from "../components/LogoMark.astro";
+import GitHubIcon from "../components/GitHubIcon.astro";
+import ThemePicker from "../components/ThemePicker.astro";
+import { themeInitScript } from "../lib/site-theme";
+import { DEMO, GITHUB } from "../lib/stack-model";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Open vCenter - open source virtualization center for Hyper-V",
+  description = "Open vCenter is an open source web console to manage Microsoft Hyper-V clusters, hosts and virtual machines - inventory, lifecycle and power actions, templates, ISOs and HTML5 consoles.",
+} = Astro.props;
+
+const nav = [
+  { href: "/#features", label: "Features" },
+  { href: "/#stack", label: "Stack" },
+  { href: "/#install", label: "Install" },
+  { href: "/docs/", label: "Docs" },
+];
+---
+
+<!doctype html>
+<html lang="en" data-site-theme="modern">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    {Astro.site && <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />}
+    <meta name="theme-color" content="#05070d" />
+    <meta name="generator" content={Astro.generator} />
+    <script is:inline set:html={themeInitScript()} />
+  </head>
+  <body class="min-h-screen overflow-x-hidden">
+    <header class="site-bar sticky top-0 z-50 border-b">
+      <div class="container-page flex h-16 items-center gap-6">
+        <a href="/" class="flex items-center gap-2.5" aria-label="Open vCenter home">
+          <LogoMark class="h-7 w-auto" />
+          <span class="text-[17px] font-semibold tracking-tight">
+            Open <span class="text-gradient">vCenter</span>
+          </span>
+        </a>
+        <nav class="hidden items-center gap-1 md:flex">
+          {
+            nav.map((item) => (
+              <a
+                href={item.href}
+                class="rounded-md px-3 py-1.5 text-sm text-muted transition-colors hover:text-fg"
+                {...(item.href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}
+              >
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+        <div class="ml-auto flex items-center gap-2">
+          <ThemePicker />
+          <a href={GITHUB} target="_blank" rel="noreferrer" class="icon-btn !size-9" aria-label="GitHub">
+            <GitHubIcon class="size-[18px]" />
+          </a>
+          <a href={DEMO} target="_blank" rel="noreferrer" class="btn-primary !px-3.5 !py-2 text-sm">
+            Live demo
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="desktop">
+      <slot />
+    </main>
+
+    <footer class="site-bar border-t">
+      <div class="container-page flex flex-col gap-6 pt-10 pb-6 text-sm text-muted sm:flex-row sm:items-center">
+        <div class="flex items-center gap-2.5">
+          <LogoMark class="h-5 w-auto" />
+          <span>Open vCenter · Apache License 2.0</span>
+        </div>
+        <nav class="flex flex-wrap gap-x-5 gap-y-2 sm:ml-auto">
+          <a href={GITHUB} class="hover:text-fg">GitHub</a>
+          <a href="/docs/" class="hover:text-fg">Docs</a>
+          <a href={`${GITHUB}/releases`} class="hover:text-fg">Releases</a>
+          <a href={DEMO} class="hover:text-fg">Live demo</a>
+        </nav>
+      </div>
+      <p class="container-page pb-10 text-xs leading-relaxed text-muted">
+        Open vCenter is an independent open source project, not affiliated with or endorsed by Microsoft,
+        VMware, Broadcom or any other vendor. Microsoft, Windows and Hyper-V are trademarks of the Microsoft
+        group of companies; VMware and vCenter are trademarks of Broadcom Inc. All other trademarks belong to
+        their respective owners. <a href="/docs/#disclaimer" class="underline hover:text-fg">Disclaimer</a>
+      </p>
+    </footer>
+  </body>
+</html>

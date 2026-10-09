@@ -1,0 +1,14 @@
+---
+// Starlight override: the landing page's header actions.
+import GitHubIcon from "../GitHubIcon.astro";
+import { DEMO, GITHUB } from "../../lib/stack-model";
+---
+
+<div class="flex items-center gap-2">
+  <a href={GITHUB} target="_blank" rel="noreferrer" class="icon-btn !size-9" aria-label="GitHub">
+    <GitHubIcon class="size-[18px]" />
+  </a>
+  <a href={DEMO} target="_blank" rel="noreferrer" class="btn-primary !px-3.5 !py-2 text-sm whitespace-nowrap no-underline">
+    Live demo
+  </a>
+</div>

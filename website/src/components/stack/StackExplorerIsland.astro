@@ -1,0 +1,17 @@
+---
+// Loads the stack data at build time and hydrates the explorer when it
+// scrolls into view. Used by the landing page and the docs (MDX).
+import StackExplorer from "./StackExplorer.tsx";
+import { loadStackData, stackSummary } from "../../lib/stack-data";
+import type { Mode } from "../../lib/stack-model";
+
+interface Props {
+  mode?: Mode;
+}
+
+const { mode = "docker" } = Astro.props;
+---
+
+<div class="not-content my-8">
+  <StackExplorer client:visible data={loadStackData()} summary={stackSummary()} initialMode={mode} />
+</div>
