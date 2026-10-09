@@ -1,9 +1,10 @@
 # Open vCenter - Docker Compose quick install
 
-A batteries-included version of [`docs/docker-compose.md`](../../docs/docker-compose.md):
-one `docker-compose.yaml`, published images, everything behind a single
-**nginx** entrypoint on `http://localhost` instead of separate per-service
-ports for the app itself. Compared to the narrative doc, this adds:
+The whole stack as one `docker-compose.yaml` with the published images,
+everything behind a single **nginx** entrypoint on `http://localhost` instead
+of separate per-service ports for the app itself. See
+[Docker Compose](https://openvcenter.com/docs/docker-compose/) for the reasoning behind the setup.
+What's wired up:
 
 - **nginx as the "ingress"** - one public entrypoint (`:80`) routing `/api/`
   to `ovc-backend` and everything else to `ovc-frontend`, the same
@@ -12,8 +13,7 @@ ports for the app itself. Compared to the narrative doc, this adds:
   `OVC_PUBLIC_BASE_URL` only ever have to agree on one origin.
 - **Keycloak is Postgres-backed with the `ovc` realm auto-imported** on
   first boot (`keycloak/ovc-realm.json`) - no manual realm/client creation,
-  and it survives a `docker compose down` / `up` cycle (the narrative doc's
-  `start-dev` with no `--import-realm` doesn't persist anything).
+  and it survives a `docker compose down` / `up` cycle.
 - **`BETTER_AUTH_SECRET` is generated, not hardcoded** - `up.sh` writes it
   to `.env` on first run instead of shipping a fixed value in a public repo.
 - **Consoles need only `guacd`** - `ovc-frontend` serves the Guacamole
@@ -41,7 +41,7 @@ and `.env`).
 | `operator` / `operator` | `MANAGE_VMS`    | Logs in, sees nothing until a scope grant is added (no admin UI for that yet - it's a `ScopeGrant` row in the database). |
 | `noroles` / `noroles`   | _(none)_        | Redirected to `/access-denied`.                                                                                          |
 
-See [Roles](../../docs/kubernetes.md#roles) for what each role actually
+See [Roles](https://openvcenter.com/docs/kubernetes/#roles) for what each role actually
 grants. Change or remove these test users once you're past a first login -
 they're plain-text in `keycloak/ovc-realm.json`.
 

@@ -11,10 +11,10 @@
 <p align="center">
   <a href="https://openvcenter.com">Website</a> ·
   <a href="https://demo.openvcenter.com/">Live Demo</a> ·
-  <a href="https://openvcenter.com/architecture">Architecture</a> ·
-  <a href="https://openvcenter.com/running">Run it</a> ·
-  <a href="https://openvcenter.com/docker-compose">Docker Compose</a> ·
-  <a href="https://openvcenter.com/kubernetes">Kubernetes</a> ·
+  <a href="https://openvcenter.com/docs/architecture/">Architecture</a> ·
+  <a href="https://openvcenter.com/docs/running/">Run it</a> ·
+  <a href="https://openvcenter.com/docs/docker-compose/">Docker Compose</a> ·
+  <a href="https://openvcenter.com/docs/kubernetes/">Kubernetes</a> ·
   <a href="https://github.com/claudio-azevedo/Open-vCenter/releases">Release Notes</a>
 </p>
 
@@ -78,7 +78,7 @@ Browser ──REST──▶ ovc-frontend ──REST /api/*──▶ ovc-backend 
                                             PostgreSQL + Valkey
 ```
 
-See **[Architecture](https://openvcenter.com/architecture)** for the full request
+See **[Architecture](https://openvcenter.com/docs/architecture/)** for the full request
 lifecycle, queues and task states.
 
 ---
@@ -93,23 +93,23 @@ Each component lives in its own repository:
 | **ovc-backend**      | FastAPI REST API **+** a RabbitMQ worker. Owns PostgreSQL and Valkey.               | https://github.com/claudio-azevedo/Open-vCenter-Backend      |
 | **ovc-agent-hyperv** | Go Windows service on every Hyper-V host. Executes the work, replies over RabbitMQ. | https://github.com/claudio-azevedo/Open-vCenter-Agent-HyperV |
 
-See **[Components](https://openvcenter.com/components)** for each repository's stack
+See **[Components](https://openvcenter.com/docs/components/)** for each repository's stack
 and responsibilities in detail.
 
 The **backing services** (PostgreSQL, RabbitMQ, Valkey, an OIDC provider, and
 `guacd` for the browser consoles - `ovc-frontend` talks to it directly) are
 ordinary containers you run yourself - see
-**[Dependencies](https://openvcenter.com/dependencies)**.
+**[Dependencies](https://openvcenter.com/docs/dependencies/)**.
 
 ---
 
 ## Running it
 
-- **[Running in dev mode](https://openvcenter.com/running)** - local development
+- **[Running in dev mode](https://openvcenter.com/docs/running/)** - local development
   stack and per-host agent setup.
-- **[Docker Compose](https://openvcenter.com/docker-compose)** - the whole stack as
+- **[Docker Compose](https://openvcenter.com/docs/docker-compose/)** - the whole stack as
   containers, one compose file, using the published GHCR images.
-- **[Kubernetes](https://openvcenter.com/kubernetes)** - the whole stack as plain
+- **[Kubernetes](https://openvcenter.com/docs/kubernetes/)** - the whole stack as plain
   manifests.
 
 In both, the OIDC provider (Keycloak or any other) is optional.

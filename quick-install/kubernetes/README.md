@@ -1,23 +1,20 @@
 # Open vCenter - Kubernetes quick install
 
 Batteries-included Kubernetes manifests for the whole Open vCenter stack,
-using the published [container images](../../docs/kubernetes.md#container-images).
-This is the same design as [`docs/kubernetes.md`](../../docs/kubernetes.md),
-hardened for an actual "apply it and it works" deploy:
+using the published [container images](https://openvcenter.com/docs/kubernetes/#container-images).
+See [Kubernetes](https://openvcenter.com/docs/kubernetes/) for the reasoning behind the design.
+What's wired up for an "apply it and it works" deploy:
 
 - **Keycloak is Postgres-backed with the `ovc` realm auto-imported** on first
   boot (`ovc-keycloak/configmap-realm.yaml`) - no manual realm/client
-  creation, and the realm survives a pod restart (the narrative doc's
-  example uses Keycloak's embedded dev DB, which doesn't).
+  creation, and the realm survives a pod restart.
 - **`BETTER_AUTH_SECRET` is generated, not hardcoded** - `apply.sh` creates
   it as a one-off Secret on first run instead of shipping a fixed value in a
   public repo.
-- **NodePorts are pinned** to the values in the doc's NodePort table
-  (some of the doc's own YAML leaves them to auto-assignment).
+- **NodePorts are pinned** to the values in the "NodePorts" table below.
 - **Postgres, Valkey and guacd are `ClusterIP`, not `NodePort`** - nothing
   outside the cluster ever needs to reach them directly (see "NodePorts"
-  below), unlike the narrative doc which exposes everything as `NodePort` for
-  teaching purposes.
+  below).
 - **`OVC_PUBLIC_BASE_URL` is set** - without it, the Setup Agent one-liner /
   agent binary downloads fail outright with `OVC_AGENT_STORAGE=local`.
 
@@ -26,7 +23,7 @@ name-based routing. Persistent data uses `ReadWriteOnce` PVCs.
 
 ## Layout
 
-One folder per service, same shape as `docs/kubernetes.md`. Service names
+One folder per service. Service names
 carry a `-service-nodeport` or `-service` suffix matching their actual
 `Type` below:
 
@@ -63,7 +60,7 @@ never overwrites afterwards.
 ## Roles / test logins
 
 The imported realm ships three client roles on `ovc-frontend` and one test
-user per role (see [Roles](../../docs/kubernetes.md#roles) for what each
+user per role (see [Roles](https://openvcenter.com/docs/kubernetes/#roles) for what each
 grants):
 
 | Login                   | Role            | What happens                                                                                                                     |

@@ -20,19 +20,13 @@ Both auto-import a ready-to-use Keycloak realm (`ovc`, client
 | `noroles` / `noroles`     | *(none)*        | Redirected to `/access-denied`.                  |
 
 These are for kicking the tyres - see each folder's README for how to
-change them, and [Roles](../docs/kubernetes.md#roles) for what the app
+change them, and [Roles](https://openvcenter.com/docs/kubernetes/#roles) for what the app
 actually does with a role once you're past login.
 
-## How this relates to `docs/`
+## How this relates to the docs
 
-[`docs/docker-compose.md`](../docs/docker-compose.md) and
-[`docs/kubernetes.md`](../docs/kubernetes.md) explain the stack piece by
-piece, with a manual Keycloak setup left as an exercise. The two folders
-here are a ready-to-run version of the same design, with the pieces those
-docs leave manual (realm import, a generated session secret, a working VM
-Console tab out of the box) already wired up. Read the docs to understand
-*why* something is configured a certain way; run quick-install to actually
-stand the thing up.
-
-Each folder's own README has the full breakdown of what it adds on top of
-the narrative docs, and why.
+The [Docker Compose](https://openvcenter.com/docs/docker-compose/) and
+[Kubernetes](https://openvcenter.com/docs/kubernetes/) docs explain *why* the stack is configured the
+way it is; the two folders here are the ready-to-run version, with the realm
+import, a generated session secret and a working VM Console tab already wired
+up. Each folder's own README lists what it sets up, and why.

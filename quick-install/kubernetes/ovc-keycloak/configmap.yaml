@@ -7,8 +7,8 @@ data:
   KC_BOOTSTRAP_ADMIN_USERNAME: admin
   KC_BOOTSTRAP_ADMIN_PASSWORD: admin
   # Postgres-backed so the realm (and any change made in the admin console
-  # after import) survives a pod restart - the docs/kubernetes.md example
-  # skips this and loses everything on restart (Keycloak's embedded dev DB).
+  # after import) survives a pod restart - Keycloak's embedded dev DB would
+  # lose everything on restart.
   KC_DB: postgres
   KC_DB_URL: jdbc:postgresql://ovc-postgres-service:5432/keycloak
   KC_DB_USERNAME: ovc

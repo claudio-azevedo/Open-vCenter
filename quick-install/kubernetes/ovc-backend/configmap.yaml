@@ -34,7 +34,7 @@ data:
   # External URL a Hyper-V host's agent uses to download binaries - origin
   # only, the backend appends OVC_API_PREFIX ("/api") itself. Required for
   # the Setup Agent one-liner / agent upgrades to work at all with
-  # OVC_AGENT_STORAGE=local (docs/kubernetes.md's example omits this).
+  # OVC_AGENT_STORAGE=local.
   OVC_PUBLIC_BASE_URL: http://frontend.openvcenter.local
 
   OVC_PREFLIGHT: "true"
