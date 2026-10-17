@@ -1,6 +1,9 @@
 <h1 align="center">
   <a href="https://openvcenter.com/">
-    <img src=".github/ovc-logo.svg" alt="Open vCenter" width="512">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset=".github/ovc-logo-dark.svg">
+      <img src=".github/ovc-logo.svg" alt="Open vCenter" width="512">
+    </picture>
   </a>
 </h1>
 

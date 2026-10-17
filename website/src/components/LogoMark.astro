@@ -1,30 +1,35 @@
 ---
-// The logo's three Win95-style server bays (.github/ovc-logo.svg),
-// redrawn without the wordmark so it stays crisp at small sizes.
+// The cube mark from the logo (.github/ovc-logo.svg), without the wordmark so
+// it stays crisp at small sizes. The faces follow the skin: --logo-top for the
+// top face, the text colour for the rest (white on the dark/blue bars, dark on
+// win9x).
 interface Props {
   class?: string;
 }
 const { class: className } = Astro.props;
-const bays = [
-  { y: 0, led: "#00cc33" },
-  { y: 46, led: "#00d2e6" },
-  { y: 92, led: "#ffd400" },
-];
 ---
 
-<svg viewBox="-2 -2 180 134" class={className} aria-hidden="true">
-  {
-    bays.map(({ y, led }) => (
-      <g transform={`translate(0 ${y})`}>
-        <rect width="176" height="38" fill="#c0c0c0" stroke="#000" stroke-width="3" />
-        <path d="M4 34V4h168" fill="none" stroke="#fff" stroke-width="3" />
-        <path d="M4 34h168V4" fill="none" stroke="#808080" stroke-width="3" />
-        <rect x="12" y="13" width="12" height="12" fill={led} stroke="#000" stroke-width="2" />
-        <rect x="34" y="11" width="62" height="16" fill="#000080" stroke="#000" stroke-width="2" />
-        {[110, 124, 138, 152].map((x) => (
-          <rect x={x} y="12" width="8" height="14" fill="#808080" />
-        ))}
-      </g>
-    ))
-  }
+<svg viewBox="38 30 124 142" class:list={["logo-mark", className]} aria-hidden="true">
+  <polygon points="100,36 156,68 100,100 44,68" fill="var(--logo-top)" />
+  <polygon points="44,74 96,104 96,166 44,136" fill="currentColor" />
+  <polygon
+    points="108,108 152,82 152,132 108,158"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="7"
+    stroke-linejoin="round"
+  />
 </svg>
+
+<style>
+  .logo-mark {
+    --logo-top: #1e73be;
+    color: var(--color-fg);
+  }
+  :global(:root[data-site-theme="win9x"]) .logo-mark {
+    --logo-top: #00569d;
+  }
+  :global(:root:is([data-site-theme="xp"], [data-site-theme="win7"])) .logo-mark {
+    --logo-top: #0d273e;
+  }
+</style>
