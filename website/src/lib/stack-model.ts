@@ -15,7 +15,7 @@ export const KIND_LABEL: Record<Kind, string> = {
   auth: "Identity",
 };
 
-export const GITHUB = "https://github.com/claudio-azevedo/Open-vCenter";
+export const GITHUB = "https://github.com/openvcenter/Open-vCenter";
 export const DEMO = "https://demo.openvcenter.com/";
 
 export interface ComponentMeta {
@@ -59,7 +59,7 @@ export const COMPONENTS: ComponentMeta[] = [
     tagline: "React 19 · SSR web UI",
     description:
       "The web console and the only REST client. Its server proxies /api/* to the backend with the OIDC bearer token attached, and serves the Guacamole tunnel for the VM consoles itself.",
-    repo: "https://github.com/claudio-azevedo/Open-vCenter-Frontend",
+    repo: "https://github.com/openvcenter/Open-vCenter-Frontend",
     sources: {
       docker: ["ovc-frontend"],
       k8s: [
@@ -77,7 +77,7 @@ export const COMPONENTS: ComponentMeta[] = [
     tagline: "FastAPI · REST API",
     description:
       "Serves /api/*, enforces RBAC, records a Task for every mutating operation and publishes it to the host's RabbitMQ queue. It never talks to a host directly and never blocks on an agent.",
-    repo: "https://github.com/claudio-azevedo/Open-vCenter-Backend",
+    repo: "https://github.com/openvcenter/Open-vCenter-Backend",
     sources: {
       docker: ["ovc-backend"],
       k8s: [
@@ -95,7 +95,7 @@ export const COMPONENTS: ComponentMeta[] = [
     tagline: "RabbitMQ consumer",
     description:
       "Same image as the API, different command. Consumes every host's response and inventory queues, applies results to PostgreSQL and the Valkey cache, and times out stale tasks.",
-    repo: "https://github.com/claudio-azevedo/Open-vCenter-Backend",
+    repo: "https://github.com/openvcenter/Open-vCenter-Backend",
     sources: {
       docker: ["ovc-backend-worker"],
       k8s: ["ovc-backend/deployment-worker.yaml", "ovc-backend/configmap.yaml"],
@@ -191,7 +191,7 @@ export const COMPONENTS: ComponentMeta[] = [
     tagline: "ovc-agent per host",
     description:
       "A Go Windows service on each Hyper-V host. It connects out to RabbitMQ, runs the work with PowerShell / Hyper-V cmdlets in a persistent job queue, and publishes progress, results and periodic inventory back. It self-upgrades, downloading new binaries through /api.",
-    repo: "https://github.com/claudio-azevedo/Open-vCenter-Agent-HyperV",
+    repo: "https://github.com/openvcenter/Open-vCenter-Agent-HyperV",
     sources: {},
   },
 ];

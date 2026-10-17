@@ -9,7 +9,7 @@ Plain manifests for the whole stack, one namespace (`ovc-infra`) and
 `ReadWriteOnce` PVCs for persistent data.
 
 :::note[Ready to deploy?]
-[`quick-install/kubernetes`](https://github.com/claudio-azevedo/Open-vCenter/tree/main/quick-install/kubernetes)
+[`quick-install/kubernetes`](https://github.com/openvcenter/Open-vCenter/tree/main/quick-install/kubernetes)
 is a hardened, ready-to-apply version of everything below - Keycloak's
 realm auto-imported, the session secret generated, NodePorts pinned and an
 Ingress included. This page explains the *why* behind that design; the
@@ -25,8 +25,8 @@ GHCR (`guacd` is the upstream `guacamole/guacd:1.6.0`):
 
 | Component      | Image                                         |
 | -------------- | --------------------------------------------- |
-| `ovc-frontend` | `ghcr.io/claudio-azevedo/ovc-frontend:latest` |
-| `ovc-backend`  | `ghcr.io/claudio-azevedo/ovc-backend:latest`  |
+| `ovc-frontend` | `ghcr.io/openvcenter/ovc-frontend:latest` |
+| `ovc-backend`  | `ghcr.io/openvcenter/ovc-backend:latest`  |
 
 `ovc-backend`'s worker Deployment reuses the same `ovc-backend` image with
 `command: python -m app.worker` instead of `uvicorn`. `ovc-agent-hyperv` isn't
@@ -92,7 +92,7 @@ sessions.
 
 ## Deploying
 
-See [`quick-install/kubernetes`](https://github.com/claudio-azevedo/Open-vCenter/tree/main/quick-install/kubernetes)
+See [`quick-install/kubernetes`](https://github.com/openvcenter/Open-vCenter/tree/main/quick-install/kubernetes)
 for the actual manifests, NodePorts, optional Ingress and `apply.sh` /
 `delete.sh`.
 

@@ -11,6 +11,6 @@ spec:
     spec:
       containers:
         - name: ovc-backend-worker
-          image: ghcr.io/claudio-azevedo/ovc-backend:latest
+          image: ghcr.io/openvcenter/ovc-backend:latest
           command: ["python", "-m", "app.worker"]
           envFrom: [{ configMapRef: { name: ovc-backend-configmap } }]

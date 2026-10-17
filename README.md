@@ -15,7 +15,7 @@
   <a href="https://openvcenter.com/docs/running/">Run it</a> ·
   <a href="https://openvcenter.com/docs/docker-compose/">Docker Compose</a> ·
   <a href="https://openvcenter.com/docs/kubernetes/">Kubernetes</a> ·
-  <a href="https://github.com/claudio-azevedo/Open-vCenter/releases">Release Notes</a>
+  <a href="https://github.com/openvcenter/Open-vCenter/releases">Release Notes</a>
 </p>
 
 ## Overview
@@ -89,9 +89,9 @@ Each component lives in its own repository:
 
 | Component            | Role                                                                                | Repository                                                   |
 | -------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| **ovc-frontend**     | React 19 / TanStack Start SSR web UI.                                               | https://github.com/claudio-azevedo/Open-vCenter-Frontend     |
-| **ovc-backend**      | FastAPI REST API **+** a RabbitMQ worker. Owns PostgreSQL and Valkey.               | https://github.com/claudio-azevedo/Open-vCenter-Backend      |
-| **ovc-agent-hyperv** | Go Windows service on every Hyper-V host. Executes the work, replies over RabbitMQ. | https://github.com/claudio-azevedo/Open-vCenter-Agent-HyperV |
+| **ovc-frontend**     | React 19 / TanStack Start SSR web UI.                                               | https://github.com/openvcenter/Open-vCenter-Frontend     |
+| **ovc-backend**      | FastAPI REST API **+** a RabbitMQ worker. Owns PostgreSQL and Valkey.               | https://github.com/openvcenter/Open-vCenter-Backend      |
+| **ovc-agent-hyperv** | Go Windows service on every Hyper-V host. Executes the work, replies over RabbitMQ. | https://github.com/openvcenter/Open-vCenter-Agent-HyperV |
 
 See **[Components](https://openvcenter.com/docs/components/)** for each repository's stack
 and responsibilities in detail.

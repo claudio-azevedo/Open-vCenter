@@ -12,7 +12,7 @@ the internal Compose network: only `ovc-frontend`'s server talks to it
 (`GUACD_URL: ovc-guacd:4822`), never the browser.
 
 :::note[Ready to deploy?]
-[`quick-install/docker`](https://github.com/claudio-azevedo/Open-vCenter/tree/main/quick-install/docker)
+[`quick-install/docker`](https://github.com/openvcenter/Open-vCenter/tree/main/quick-install/docker)
 is a hardened, ready-to-run version of this - everything behind a single
 nginx entrypoint, Keycloak's realm auto-imported, the session secret
 generated on first run. This page explains the *why*; the linked README
@@ -38,7 +38,7 @@ Docker - see [Running in dev mode](/docs/running/#3-frontend---ovc-frontend).
 ## Bring it up
 
 ```sh
-git clone https://github.com/claudio-azevedo/Open-vCenter.git
+git clone https://github.com/openvcenter/Open-vCenter.git
 cd Open-vCenter/quick-install/docker
 ./up.sh
 curl localhost:8000/api/health   # {"ok":true,"db":true,"cache":true,"rabbit":true}

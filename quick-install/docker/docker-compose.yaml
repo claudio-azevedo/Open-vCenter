@@ -61,7 +61,7 @@ services:
       ovc-postgres: { condition: service_healthy }
 
   ovc-backend:
-    image: ghcr.io/claudio-azevedo/ovc-backend:latest
+    image: ghcr.io/openvcenter/ovc-backend:latest
     restart: unless-stopped
     depends_on:
       ovc-postgres: { condition: service_healthy }
@@ -94,7 +94,7 @@ services:
       OVC_PREFLIGHT_MANAGE_RABBITMQ_USERS: "true"
 
   ovc-backend-worker:
-    image: ghcr.io/claudio-azevedo/ovc-backend:latest
+    image: ghcr.io/openvcenter/ovc-backend:latest
     restart: unless-stopped
     depends_on: [ovc-backend]
     command: ["python", "-m", "app.worker"]
@@ -105,7 +105,7 @@ services:
       OVC_RABBITMQ_MGMT_URL: http://ovc-rabbitmq:15672
 
   ovc-frontend:
-    image: ghcr.io/claudio-azevedo/ovc-frontend:latest
+    image: ghcr.io/openvcenter/ovc-frontend:latest
     restart: unless-stopped
     depends_on: [ovc-backend, ovc-guacd]
     ports: ["3000:3000"] # direct/debug access only - see README

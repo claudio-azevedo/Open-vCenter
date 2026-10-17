@@ -153,7 +153,7 @@ Tear down (keeps PVCs + the frontend secret):
   in the admin console, or delete and reapply `ovc-keycloak/` (loses realm
   state) to re-trigger the import.
 - **backend / frontend**: published as **public** GHCR images
-  (`ghcr.io/claudio-azevedo/ovc-backend`, `ovc-frontend`), no
+  (`ghcr.io/openvcenter/ovc-backend`, `ovc-frontend`), no
   `imagePullSecret` needed. If your own fork publishes to a private
   registry instead, add one to each Deployment.
 - **backend**: `OVC_AUTH_MODE=oidc` - the frontend's image always requires

@@ -95,7 +95,7 @@ started on `:3000` will misbehave past the login screen.
   instead (edit it in `docker-compose.yaml` under `ovc-backend`, then
   `docker compose up -d ovc-backend` to pick it up).
 - **backend / frontend**: published as **public** GHCR images
-  (`ghcr.io/claudio-azevedo/ovc-backend`, `ovc-frontend`) - no registry
+  (`ghcr.io/openvcenter/ovc-backend`, `ovc-frontend`) - no registry
   login needed to pull them.
 - **guacd** (`ovc-guacd`, no published port): `GUACD_URL` on `ovc-frontend`
   is read at runtime on every console connection (`host:port`, or
